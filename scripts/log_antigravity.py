@@ -397,7 +397,7 @@ def hook_mode() -> None:
     log line is a much smaller problem than a broken editor.
     """
     try:
-        raw = sys.stdin.buffer.read().decode("utf-8", errors="replace").strip()
+        raw = sys.stdin.buffer.read().decode("utf-8-sig", errors="replace").strip()
         data = json.loads(raw) if raw else {}
         if not isinstance(data, dict):
             data = {}
