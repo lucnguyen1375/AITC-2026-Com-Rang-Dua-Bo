@@ -1,0 +1,123 @@
+export type FoodImage = { src: string; source: string; author: string; license: string; licenseUrl: string; original: string; changes: string; retrieved: string };
+export const foodImages: Record<string, FoodImage> = {
+  "rice": {
+    "src": "/images/foods/rice.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:A_bowl_of_rice.jpg",
+    "author": "Douglas Perkins",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/d/d6/A_bowl_of_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "chicken": {
+    "src": "/images/foods/chicken.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:020240103_Boiled_chicken_breast.jpg",
+    "author": "Silar",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/5/5a/020240103_Boiled_chicken_breast.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "beef": {
+    "src": "/images/foods/beef.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Roastbeef.jpg",
+    "author": "Timo1974",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Roastbeef.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "egg": {
+    "src": "/images/foods/egg.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Boiled_Egg_-_Crossection.jpg",
+    "author": "Ramesh NG",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Boiled_Egg_-_Crossection.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "fish": {
+    "src": "/images/foods/fish.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Homemade_steamed_fish_in_dinner.jpg",
+    "author": "Apeach316",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Homemade_steamed_fish_in_dinner.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "tofu": {
+    "src": "/images/foods/tofu.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Japanese_SilkyTofu_(Kinugoshi_Tofu).JPG",
+    "author": "DryPot",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/0/03/Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "vegetable": {
+    "src": "/images/foods/vegetable.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Steamed_broccoli_and_red_cabbage_-_Col_roja_y_br%C3%A9col_al_vapor_(4817782946).jpg",
+    "author": "Lablascovegmenu from London",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/d/db/Steamed_broccoli_and_red_cabbage_-_Col_roja_y_br%C3%A9col_al_vapor_%284817782946%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "banana": {
+    "src": "/images/foods/banana.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Banana-Single.jpg",
+    "author": "Evan-Amos",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Single.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "milk": {
+    "src": "/images/foods/milk.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Glass_of_Milk_(33657535532).jpg",
+    "author": "NIAID",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Glass_of_Milk_%2833657535532%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "sweetpotato": {
+    "src": "/images/foods/sweetpotato.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Batata_cocida_de_las_chacras_de_Capiov%C3%AD.jpg",
+    "author": "Horacio Cambeiro",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Batata_cocida_de_las_chacras_de_Capiov%C3%AD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "peanut": {
+    "src": "/images/foods/peanut.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Roasted_Groundnuts.jpg",
+    "author": "Nana Pearls",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/5/52/Roasted_Groundnuts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  },
+  "oil": {
+    "src": "/images/foods/oil.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Olive_oil_from_Oneglia.jpg",
+    "author": "Lemone",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/49/Olive_oil_from_Oneglia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "changes": "Wikimedia thumbnail, CSS crop for display.",
+    "retrieved": "2026-10-06"
+  }
+};

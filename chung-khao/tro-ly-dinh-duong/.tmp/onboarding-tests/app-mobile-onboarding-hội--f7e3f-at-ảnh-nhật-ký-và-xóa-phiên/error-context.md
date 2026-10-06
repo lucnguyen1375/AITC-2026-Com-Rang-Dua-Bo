@@ -1,0 +1,901 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "Đến nội dung chính" [ref=e4] [cursor=pointer]:
+    - /url: "#main"
+  - complementary [ref=e5]:
+    - navigation "Điều hướng chính" [ref=e6]:
+      - button "Kế hoạch" [ref=e7] [cursor=pointer]:
+        - img [ref=e8]
+        - generic [ref=e10]: Kế hoạch
+      - button "Bữa ăn" [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+        - generic [ref=e15]: Bữa ăn
+      - button "Hồ sơ" [ref=e16] [cursor=pointer]:
+        - img [ref=e17]
+        - generic [ref=e20]: Hồ sơ
+    - generic [ref=e21]:
+      - button "T?i b?n JSON" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]
+        - generic [ref=e26]: T?i b?n JSON
+      - button "Xóa dữ liệu phiên" [ref=e27] [cursor=pointer]:
+        - img [ref=e28]
+        - generic [ref=e31]: Xóa dữ liệu phiên
+  - main [ref=e32]:
+    - generic [ref=e33]:
+      - generic [ref=e34]: Bữa Việt / Kế hoạch
+      - button "Trò chuyện với Vi" [ref=e35] [cursor=pointer]:
+        - img [ref=e36]
+        - text: Trò chuyện với Vi
+    - status [ref=e38]:
+      - img [ref=e39]
+      - generic [ref=e41]: Kế hoạch đã sẵn sàng. Chọn ngày để xem nhịp ăn và tập.
+      - button "Đóng thông báo" [ref=e42] [cursor=pointer]:
+        - img [ref=e43]
+    - generic [ref=e46]:
+      - generic [ref=e47]:
+        - heading "Kế hoạch của bạn" [level=1] [ref=e48]
+        - paragraph [ref=e49]: Ăn đúng nhịp, tiếp sức cho từng buổi tập.
+      - button "Sửa hồ sơ" [ref=e50] [cursor=pointer]:
+        - img [ref=e51]
+        - text: Sửa hồ sơ
+    - region "Nhóm lửa từ hôm nay" [ref=e54]:
+      - generic [ref=e55]:
+        - img [ref=e57]
+        - generic [ref=e59]:
+          - heading "Nhóm lửa từ hôm nay" [level=2] [ref=e60]
+          - paragraph [ref=e61]: Mỗi ngày chăm sóc bản thân đều đáng được ghi nhận.
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - text: "Dài nhất:"
+          - strong [ref=e70]: 0 ngày
+        - generic [ref=e71]:
+          - text: "Đã hoàn thành:"
+          - strong [ref=e72]: 0 ngày
+      - list "Các mốc streak" [ref=e73]:
+        - listitem [ref=e74]:
+          - img [ref=e76]
+          - text: 1 ngày
+          - generic [ref=e78]: ", chưa đạt"
+        - listitem [ref=e79]:
+          - img [ref=e81]
+          - text: 3 ngày
+          - generic [ref=e83]: ", chưa đạt"
+        - listitem [ref=e84]:
+          - img [ref=e86]
+          - text: 7 ngày
+          - generic [ref=e88]: ", chưa đạt"
+        - listitem [ref=e89]:
+          - img [ref=e91]
+          - text: 14 ngày
+          - generic [ref=e93]: ", chưa đạt"
+        - listitem [ref=e94]:
+          - img [ref=e96]
+          - text: 30 ngày
+          - generic [ref=e98]: ", chưa đạt"
+      - paragraph [ref=e99]: 1 ngày nữa đến mốc 1 ngày liên tiếp. Giữ nhịp theo khả năng của bạn nhé.
+      - status
+      - generic [ref=e100]:
+        - heading "Nhịp của tuần này" [level=3] [ref=e101]
+        - paragraph [ref=e102]: Tick cả hai mục để tính một ngày streak. Có thể bổ sung hôm nay và các ngày đã qua trong tuần.
+      - table "Ghi nhận dinh dưỡng và tập luyện hoặc phục hồi theo ngày" [ref=e103]:
+        - caption [ref=e104]: Ghi nhận dinh dưỡng và tập luyện hoặc phục hồi theo ngày
+        - rowgroup [ref=e105]:
+          - row "Ngày Dinh dưỡng Tập / nghỉ" [ref=e106]:
+            - columnheader "Ngày" [ref=e107]
+            - columnheader "Dinh dưỡng" [ref=e108]
+            - columnheader "Tập / nghỉ" [ref=e109]
+        - rowgroup [ref=e110]:
+          - row "Thứ Hai 05-10 Đã qua Dinh dưỡng Thứ Hai Đã chăm sóc dinh dưỡng Tập luyện Thứ Hai Tập" [ref=e111]:
+            - rowheader "Thứ Hai 05-10 Đã qua" [ref=e112]:
+              - generic [ref=e114]:
+                - text: Thứ Hai
+                - generic [ref=e115]: 05-10
+              - generic [ref=e116]: Đã qua
+            - cell "Dinh dưỡng Thứ Hai Đã chăm sóc dinh dưỡng" [ref=e117]:
+              - generic [ref=e118] [cursor=pointer]:
+                - checkbox "Dinh dưỡng Thứ Hai" [ref=e119]
+                - generic [ref=e120]: Đã chăm sóc dinh dưỡng
+            - cell "Tập luyện Thứ Hai Tập" [ref=e121]:
+              - generic [ref=e122] [cursor=pointer]:
+                - checkbox "Tập luyện Thứ Hai" [ref=e123]
+                - generic [ref=e124]: Tập
+          - row "Thứ Ba 06-10 Hôm nay Dinh dưỡng Thứ Ba Đã chăm sóc dinh dưỡng Tập luyện Thứ Ba Tập" [ref=e125]:
+            - rowheader "Thứ Ba 06-10 Hôm nay" [ref=e126]:
+              - generic [ref=e128]:
+                - text: Thứ Ba
+                - generic [ref=e129]: 06-10
+              - generic [ref=e130]: Hôm nay
+            - cell "Dinh dưỡng Thứ Ba Đã chăm sóc dinh dưỡng" [ref=e131]:
+              - generic [ref=e132] [cursor=pointer]:
+                - checkbox "Dinh dưỡng Thứ Ba" [ref=e133]
+                - generic [ref=e134]: Đã chăm sóc dinh dưỡng
+            - cell "Tập luyện Thứ Ba Tập" [ref=e135]:
+              - generic [ref=e136] [cursor=pointer]:
+                - checkbox "Tập luyện Thứ Ba" [ref=e137]
+                - generic [ref=e138]: Tập
+          - row "Thứ Tư 07-10 Chưa đến ngày Dinh dưỡng Thứ Tư Đã chăm sóc dinh dưỡng Phục hồi Thứ Tư Nghỉ" [ref=e139]:
+            - rowheader "Thứ Tư 07-10 Chưa đến ngày" [ref=e140]:
+              - generic [ref=e142]:
+                - text: Thứ Tư
+                - generic [ref=e143]: 07-10
+              - generic [ref=e144]: Chưa đến ngày
+            - cell "Dinh dưỡng Thứ Tư Đã chăm sóc dinh dưỡng" [ref=e145]:
+              - generic [ref=e146]:
+                - checkbox "Dinh dưỡng Thứ Tư" [disabled] [ref=e147]
+                - generic [ref=e148]: Đã chăm sóc dinh dưỡng
+            - cell "Phục hồi Thứ Tư Nghỉ" [ref=e149]:
+              - generic [ref=e150]:
+                - checkbox "Phục hồi Thứ Tư" [disabled] [ref=e151]
+                - generic [ref=e152]:
+                  - img [ref=e153]
+                  - text: Nghỉ
+          - row "Thứ Năm 08-10 Chưa đến ngày Dinh dưỡng Thứ Năm Đã chăm sóc dinh dưỡng Phục hồi Thứ Năm Nghỉ" [ref=e155]:
+            - rowheader "Thứ Năm 08-10 Chưa đến ngày" [ref=e156]:
+              - generic [ref=e158]:
+                - text: Thứ Năm
+                - generic [ref=e159]: 08-10
+              - generic [ref=e160]: Chưa đến ngày
+            - cell "Dinh dưỡng Thứ Năm Đã chăm sóc dinh dưỡng" [ref=e161]:
+              - generic [ref=e162]:
+                - checkbox "Dinh dưỡng Thứ Năm" [disabled] [ref=e163]
+                - generic [ref=e164]: Đã chăm sóc dinh dưỡng
+            - cell "Phục hồi Thứ Năm Nghỉ" [ref=e165]:
+              - generic [ref=e166]:
+                - checkbox "Phục hồi Thứ Năm" [disabled] [ref=e167]
+                - generic [ref=e168]:
+                  - img [ref=e169]
+                  - text: Nghỉ
+          - row "Thứ Sáu 09-10 Chưa đến ngày Dinh dưỡng Thứ Sáu Đã chăm sóc dinh dưỡng Phục hồi Thứ Sáu Nghỉ" [ref=e171]:
+            - rowheader "Thứ Sáu 09-10 Chưa đến ngày" [ref=e172]:
+              - generic [ref=e174]:
+                - text: Thứ Sáu
+                - generic [ref=e175]: 09-10
+              - generic [ref=e176]: Chưa đến ngày
+            - cell "Dinh dưỡng Thứ Sáu Đã chăm sóc dinh dưỡng" [ref=e177]:
+              - generic [ref=e178]:
+                - checkbox "Dinh dưỡng Thứ Sáu" [disabled] [ref=e179]
+                - generic [ref=e180]: Đã chăm sóc dinh dưỡng
+            - cell "Phục hồi Thứ Sáu Nghỉ" [ref=e181]:
+              - generic [ref=e182]:
+                - checkbox "Phục hồi Thứ Sáu" [disabled] [ref=e183]
+                - generic [ref=e184]:
+                  - img [ref=e185]
+                  - text: Nghỉ
+          - row "Thứ Bảy 10-10 Chưa đến ngày Dinh dưỡng Thứ Bảy Đã chăm sóc dinh dưỡng Phục hồi Thứ Bảy Nghỉ" [ref=e187]:
+            - rowheader "Thứ Bảy 10-10 Chưa đến ngày" [ref=e188]:
+              - generic [ref=e190]:
+                - text: Thứ Bảy
+                - generic [ref=e191]: 10-10
+              - generic [ref=e192]: Chưa đến ngày
+            - cell "Dinh dưỡng Thứ Bảy Đã chăm sóc dinh dưỡng" [ref=e193]:
+              - generic [ref=e194]:
+                - checkbox "Dinh dưỡng Thứ Bảy" [disabled] [ref=e195]
+                - generic [ref=e196]: Đã chăm sóc dinh dưỡng
+            - cell "Phục hồi Thứ Bảy Nghỉ" [ref=e197]:
+              - generic [ref=e198]:
+                - checkbox "Phục hồi Thứ Bảy" [disabled] [ref=e199]
+                - generic [ref=e200]:
+                  - img [ref=e201]
+                  - text: Nghỉ
+          - row "Chủ nhật 11-10 Chưa đến ngày Dinh dưỡng Chủ nhật Đã chăm sóc dinh dưỡng Phục hồi Chủ nhật Nghỉ" [ref=e203]:
+            - rowheader "Chủ nhật 11-10 Chưa đến ngày" [ref=e204]:
+              - generic [ref=e206]:
+                - text: Chủ nhật
+                - generic [ref=e207]: 11-10
+              - generic [ref=e208]: Chưa đến ngày
+            - cell "Dinh dưỡng Chủ nhật Đã chăm sóc dinh dưỡng" [ref=e209]:
+              - generic [ref=e210]:
+                - checkbox "Dinh dưỡng Chủ nhật" [disabled] [ref=e211]
+                - generic [ref=e212]: Đã chăm sóc dinh dưỡng
+            - cell "Phục hồi Chủ nhật Nghỉ" [ref=e213]:
+              - generic [ref=e214]:
+                - checkbox "Phục hồi Chủ nhật" [disabled] [ref=e215]
+                - generic [ref=e216]:
+                  - img [ref=e217]
+                  - text: Nghỉ
+      - paragraph [ref=e219]: "Khởi tạo sẵn 3 ngày mẫu trước hôm nay để trải nghiệm streak. Dinh dưỡng: đã ăn uống theo kế hoạch phù hợp với bạn. Tập / nghỉ: đã vận động hoặc phục hồi theo lịch. Ngày nghỉ cũng giúp giữ lửa. Bạn có thể sửa tick để khớp với thực tế."
+    - generic "Chọn ngày trong tuần" [ref=e220]:
+      - button "T2 05 Tập" [ref=e221] [cursor=pointer]:
+        - generic [ref=e222]: T2
+        - strong [ref=e223]: "05"
+        - generic [ref=e224]: Tập
+      - button "T3 06 Tập" [pressed] [ref=e225] [cursor=pointer]:
+        - generic [ref=e226]: T3
+        - strong [ref=e227]: "06"
+        - generic [ref=e228]: Tập
+      - button "T4 07 Nghỉ" [ref=e229] [cursor=pointer]:
+        - generic [ref=e230]: T4
+        - strong [ref=e231]: "07"
+        - generic [ref=e232]: Nghỉ
+      - button "T5 08 Nghỉ" [ref=e233] [cursor=pointer]:
+        - generic [ref=e234]: T5
+        - strong [ref=e235]: "08"
+        - generic [ref=e236]: Nghỉ
+      - button "T6 09 Nghỉ" [ref=e237] [cursor=pointer]:
+        - generic [ref=e238]: T6
+        - strong [ref=e239]: "09"
+        - generic [ref=e240]: Nghỉ
+      - button "T7 10 Nghỉ" [ref=e241] [cursor=pointer]:
+        - generic [ref=e242]: T7
+        - strong [ref=e243]: "10"
+        - generic [ref=e244]: Nghỉ
+      - button "CN 11 Nghỉ" [ref=e245] [cursor=pointer]:
+        - generic [ref=e246]: CN
+        - strong [ref=e247]: "11"
+        - generic [ref=e248]: Nghỉ
+    - generic [ref=e249]:
+      - generic [ref=e250]:
+        - generic [ref=e251]:
+          - generic [ref=e252]:
+            - generic [ref=e253]:
+              - generic [ref=e254]: Ước lượng tham khảo
+              - heading "Nạp đủ. Tập hết mình." [level=2] [ref=e255]
+            - img [ref=e256]
+          - generic [ref=e262]:
+            - generic [ref=e263]:
+              - text: Năng lượng
+              - generic [ref=e264]:
+                - strong [ref=e265]: 2.360–2.620
+                - generic [ref=e266]: kcal
+            - generic [ref=e267]:
+              - text: Chất đạm
+              - generic [ref=e268]:
+                - strong [ref=e269]: "104"
+                - generic [ref=e270]: g
+            - generic [ref=e271]:
+              - text: Bột đường
+              - generic [ref=e272]:
+                - strong [ref=e273]: 338–387
+                - generic [ref=e274]: g
+            - generic [ref=e275]:
+              - text: Chất béo
+              - generic [ref=e276]:
+                - strong [ref=e277]: 66–73
+                - generic [ref=e278]: g
+          - generic [ref=e279]:
+            - generic [ref=e280]: Tập sức mạnh · 17:30 · 60 phút
+            - generic [ref=e281]: Thứ Ba, 06-10
+        - generic [ref=e282]:
+          - generic [ref=e283]:
+            - heading "Hôm nay ăn gì?" [level=2] [ref=e284]
+            - generic [ref=e285]: Gợi ý món Việt
+          - paragraph [ref=e286]: Thông tin dinh dưỡng chỉ để tham khảo, không hoàn toàn chính xác. Giá trị thay đổi theo nguyên liệu, khẩu phần và cách chế biến; dữ liệu hiện tại chưa kiểm chứng, không thay thế tư vấn chuyên gia.
+          - paragraph [ref=e287]: Ảnh minh họa giúp nhận diện thực phẩm; khẩu phần và cách chế biến thực tế có thể khác.
+          - generic [ref=e288]:
+            - article [ref=e289]:
+              - generic [ref=e290]:
+                - heading "Bữa sáng" [level=3] [ref=e291]
+                - generic [ref=e292]: Tăng cơ
+              - generic [ref=e293]:
+                - generic [ref=e294]:
+                  - img "Ảnh minh họa Khoai lang" [ref=e296]
+                  - generic [ref=e297]:
+                    - heading "Khoai lang 200 g" [level=4] [ref=e298]:
+                      - text: Khoai lang
+                      - generic [ref=e299]: 200 g
+                    - paragraph [ref=e300]: Luộc, bỏ vỏ
+                    - generic [ref=e301]:
+                      - generic [ref=e302]:
+                        - term [ref=e303]: Năng lượng
+                        - definition [ref=e304]:
+                          - text: "152"
+                          - generic [ref=e305]: kcal
+                      - generic [ref=e306]:
+                        - term [ref=e307]: Đạm
+                        - definition [ref=e308]:
+                          - text: 2,8
+                          - generic [ref=e309]: g
+                      - generic [ref=e310]:
+                        - term [ref=e311]: Bột đường
+                        - definition [ref=e312]:
+                          - text: 35,4
+                          - generic [ref=e313]: g
+                      - generic [ref=e314]:
+                        - term [ref=e315]: Béo
+                        - definition [ref=e316]:
+                          - text: 0,2
+                          - generic [ref=e317]: g
+                - generic [ref=e318]:
+                  - img "Ảnh minh họa Trứng gà" [ref=e320]
+                  - generic [ref=e321]:
+                    - heading "Trứng gà 100 g" [level=4] [ref=e322]:
+                      - text: Trứng gà
+                      - generic [ref=e323]: 100 g
+                    - paragraph [ref=e324]: Luộc, phần ăn được
+                    - generic [ref=e325]:
+                      - generic [ref=e326]:
+                        - term [ref=e327]: Năng lượng
+                        - definition [ref=e328]:
+                          - text: "155"
+                          - generic [ref=e329]: kcal
+                      - generic [ref=e330]:
+                        - term [ref=e331]: Đạm
+                        - definition [ref=e332]:
+                          - text: "13"
+                          - generic [ref=e333]: g
+                      - generic [ref=e334]:
+                        - term [ref=e335]: Bột đường
+                        - definition [ref=e336]:
+                          - text: 1,1
+                          - generic [ref=e337]: g
+                      - generic [ref=e338]:
+                        - term [ref=e339]: Béo
+                        - definition [ref=e340]:
+                          - text: "11"
+                          - generic [ref=e341]: g
+                - generic [ref=e342]:
+                  - img "Ảnh minh họa Sữa tươi" [ref=e344]
+                  - generic [ref=e345]:
+                    - heading "Sữa tươi 200 g" [level=4] [ref=e346]:
+                      - text: Sữa tươi
+                      - generic [ref=e347]: 200 g
+                    - paragraph [ref=e348]: Nguyên chất, quy đổi theo g
+                    - generic [ref=e349]:
+                      - generic [ref=e350]:
+                        - term [ref=e351]: Năng lượng
+                        - definition [ref=e352]:
+                          - text: "122"
+                          - generic [ref=e353]: kcal
+                      - generic [ref=e354]:
+                        - term [ref=e355]: Đạm
+                        - definition [ref=e356]:
+                          - text: 6,4
+                          - generic [ref=e357]: g
+                      - generic [ref=e358]:
+                        - term [ref=e359]: Bột đường
+                        - definition [ref=e360]:
+                          - text: 9,6
+                          - generic [ref=e361]: g
+                      - generic [ref=e362]:
+                        - term [ref=e363]: Béo
+                        - definition [ref=e364]:
+                          - text: 6,6
+                          - generic [ref=e365]: g
+              - generic [ref=e366]:
+                - text: Tổng bữa · ước lượng
+                - generic [ref=e367]:
+                  - generic [ref=e368]:
+                    - term [ref=e369]: Năng lượng
+                    - definition [ref=e370]:
+                      - text: "429"
+                      - generic [ref=e371]: kcal
+                  - generic [ref=e372]:
+                    - term [ref=e373]: Đạm
+                    - definition [ref=e374]:
+                      - text: 22,2
+                      - generic [ref=e375]: g
+                  - generic [ref=e376]:
+                    - term [ref=e377]: Bột đường
+                    - definition [ref=e378]:
+                      - text: 46,1
+                      - generic [ref=e379]: g
+                  - generic [ref=e380]:
+                    - term [ref=e381]: Béo
+                    - definition [ref=e382]:
+                      - text: 17,8
+                      - generic [ref=e383]: g
+              - paragraph [ref=e384]: Đối chiếu mục tiêu tăng cơ. Cân đối thêm với các bữa còn lại trong ngày.
+              - button "Dùng bữa gợi ý này" [ref=e385] [cursor=pointer]:
+                - text: Dùng bữa gợi ý này
+                - img [ref=e386]
+            - article [ref=e388]:
+              - generic [ref=e389]:
+                - heading "Bữa trưa" [level=3] [ref=e390]
+                - generic [ref=e391]: Tăng cơ
+              - generic [ref=e392]:
+                - generic [ref=e393]:
+                  - img "Ảnh minh họa Cơm trắng" [ref=e395]
+                  - generic [ref=e396]:
+                    - heading "Cơm trắng 250 g" [level=4] [ref=e397]:
+                      - text: Cơm trắng
+                      - generic [ref=e398]: 250 g
+                    - paragraph [ref=e399]: Đã nấu chín
+                    - generic [ref=e400]:
+                      - generic [ref=e401]:
+                        - term [ref=e402]: Năng lượng
+                        - definition [ref=e403]:
+                          - text: "325"
+                          - generic [ref=e404]: kcal
+                      - generic [ref=e405]:
+                        - term [ref=e406]: Đạm
+                        - definition [ref=e407]:
+                          - text: 6,8
+                          - generic [ref=e408]: g
+                      - generic [ref=e409]:
+                        - term [ref=e410]: Bột đường
+                        - definition [ref=e411]:
+                          - text: 70,5
+                          - generic [ref=e412]: g
+                      - generic [ref=e413]:
+                        - term [ref=e414]: Béo
+                        - definition [ref=e415]:
+                          - text: 0,8
+                          - generic [ref=e416]: g
+                - generic [ref=e417]:
+                  - img "Ảnh minh họa Ức gà" [ref=e419]
+                  - generic [ref=e420]:
+                    - heading "Ức gà 150 g" [level=4] [ref=e421]:
+                      - text: Ức gà
+                      - generic [ref=e422]: 150 g
+                    - paragraph [ref=e423]: Luộc, bỏ da
+                    - generic [ref=e424]:
+                      - generic [ref=e425]:
+                        - term [ref=e426]: Năng lượng
+                        - definition [ref=e427]:
+                          - text: 247,5
+                          - generic [ref=e428]: kcal
+                      - generic [ref=e429]:
+                        - term [ref=e430]: Đạm
+                        - definition [ref=e431]:
+                          - text: 46,5
+                          - generic [ref=e432]: g
+                      - generic [ref=e433]:
+                        - term [ref=e434]: Bột đường
+                        - definition [ref=e435]:
+                          - text: "0"
+                          - generic [ref=e436]: g
+                      - generic [ref=e437]:
+                        - term [ref=e438]: Béo
+                        - definition [ref=e439]:
+                          - text: 5,4
+                          - generic [ref=e440]: g
+                - generic [ref=e441]:
+                  - img "Ảnh minh họa Rau xanh" [ref=e443]
+                  - generic [ref=e444]:
+                    - heading "Rau xanh 150 g" [level=4] [ref=e445]:
+                      - text: Rau xanh
+                      - generic [ref=e446]: 150 g
+                    - paragraph [ref=e447]: Luộc
+                    - generic [ref=e448]:
+                      - generic [ref=e449]:
+                        - term [ref=e450]: Năng lượng
+                        - definition [ref=e451]:
+                          - text: 52,5
+                          - generic [ref=e452]: kcal
+                      - generic [ref=e453]:
+                        - term [ref=e454]: Đạm
+                        - definition [ref=e455]:
+                          - text: 3,6
+                          - generic [ref=e456]: g
+                      - generic [ref=e457]:
+                        - term [ref=e458]: Bột đường
+                        - definition [ref=e459]:
+                          - text: 10,8
+                          - generic [ref=e460]: g
+                      - generic [ref=e461]:
+                        - term [ref=e462]: Béo
+                        - definition [ref=e463]:
+                          - text: 0,6
+                          - generic [ref=e464]: g
+                - generic [ref=e465]:
+                  - img "Ảnh minh họa Dầu ăn" [ref=e467]
+                  - generic [ref=e468]:
+                    - heading "Dầu ăn 10 g" [level=4] [ref=e469]:
+                      - text: Dầu ăn
+                      - generic [ref=e470]: 10 g
+                    - paragraph [ref=e471]: Lượng thực sự ăn
+                    - generic [ref=e472]:
+                      - generic [ref=e473]:
+                        - term [ref=e474]: Năng lượng
+                        - definition [ref=e475]:
+                          - text: 88,4
+                          - generic [ref=e476]: kcal
+                      - generic [ref=e477]:
+                        - term [ref=e478]: Đạm
+                        - definition [ref=e479]:
+                          - text: "0"
+                          - generic [ref=e480]: g
+                      - generic [ref=e481]:
+                        - term [ref=e482]: Bột đường
+                        - definition [ref=e483]:
+                          - text: "0"
+                          - generic [ref=e484]: g
+                      - generic [ref=e485]:
+                        - term [ref=e486]: Béo
+                        - definition [ref=e487]:
+                          - text: "10"
+                          - generic [ref=e488]: g
+              - generic [ref=e489]:
+                - text: Tổng bữa · ước lượng
+                - generic [ref=e490]:
+                  - generic [ref=e491]:
+                    - term [ref=e492]: Năng lượng
+                    - definition [ref=e493]:
+                      - text: 713,4
+                      - generic [ref=e494]: kcal
+                  - generic [ref=e495]:
+                    - term [ref=e496]: Đạm
+                    - definition [ref=e497]:
+                      - text: 56,9
+                      - generic [ref=e498]: g
+                  - generic [ref=e499]:
+                    - term [ref=e500]: Bột đường
+                    - definition [ref=e501]:
+                      - text: 81,3
+                      - generic [ref=e502]: g
+                  - generic [ref=e503]:
+                    - term [ref=e504]: Béo
+                    - definition [ref=e505]:
+                      - text: 16,8
+                      - generic [ref=e506]: g
+              - paragraph [ref=e507]: Hỗ trợ mục tiêu tăng cơ. Lựa chọn tốt cho kế hoạch tăng cơ! Bữa này có nguồn đạm ít béo và khoảng 57 g đạm, góp phần vào mục tiêu 104 g/ngày. Cứ duy trì từng bữa như vậy nhé.
+              - button "Dùng bữa gợi ý này" [ref=e508] [cursor=pointer]:
+                - text: Dùng bữa gợi ý này
+                - img [ref=e509]
+            - article [ref=e511]:
+              - generic [ref=e512]:
+                - heading "Bữa tối" [level=3] [ref=e513]
+                - generic [ref=e514]: Tăng cơ
+              - generic [ref=e515]:
+                - generic [ref=e516]:
+                  - img "Ảnh minh họa Cơm trắng" [ref=e518]
+                  - generic [ref=e519]:
+                    - heading "Cơm trắng 200 g" [level=4] [ref=e520]:
+                      - text: Cơm trắng
+                      - generic [ref=e521]: 200 g
+                    - paragraph [ref=e522]: Đã nấu chín
+                    - generic [ref=e523]:
+                      - generic [ref=e524]:
+                        - term [ref=e525]: Năng lượng
+                        - definition [ref=e526]:
+                          - text: "260"
+                          - generic [ref=e527]: kcal
+                      - generic [ref=e528]:
+                        - term [ref=e529]: Đạm
+                        - definition [ref=e530]:
+                          - text: 5,4
+                          - generic [ref=e531]: g
+                      - generic [ref=e532]:
+                        - term [ref=e533]: Bột đường
+                        - definition [ref=e534]:
+                          - text: 56,4
+                          - generic [ref=e535]: g
+                      - generic [ref=e536]:
+                        - term [ref=e537]: Béo
+                        - definition [ref=e538]:
+                          - text: 0,6
+                          - generic [ref=e539]: g
+                - generic [ref=e540]:
+                  - img "Ảnh minh họa Cá" [ref=e542]
+                  - generic [ref=e543]:
+                    - heading "Cá 150 g" [level=4] [ref=e544]:
+                      - text: Cá
+                      - generic [ref=e545]: 150 g
+                    - paragraph [ref=e546]: Hấp, phần thịt
+                    - generic [ref=e547]:
+                      - generic [ref=e548]:
+                        - term [ref=e549]: Năng lượng
+                        - definition [ref=e550]:
+                          - text: "192"
+                          - generic [ref=e551]: kcal
+                      - generic [ref=e552]:
+                        - term [ref=e553]: Đạm
+                        - definition [ref=e554]:
+                          - text: "39"
+                          - generic [ref=e555]: g
+                      - generic [ref=e556]:
+                        - term [ref=e557]: Bột đường
+                        - definition [ref=e558]:
+                          - text: "0"
+                          - generic [ref=e559]: g
+                      - generic [ref=e560]:
+                        - term [ref=e561]: Béo
+                        - definition [ref=e562]:
+                          - text: 4,1
+                          - generic [ref=e563]: g
+                - generic [ref=e564]:
+                  - img "Ảnh minh họa Đậu phụ" [ref=e566]
+                  - generic [ref=e567]:
+                    - heading "Đậu phụ 100 g" [level=4] [ref=e568]:
+                      - text: Đậu phụ
+                      - generic [ref=e569]: 100 g
+                    - paragraph [ref=e570]: Chưa chiên
+                    - generic [ref=e571]:
+                      - generic [ref=e572]:
+                        - term [ref=e573]: Năng lượng
+                        - definition [ref=e574]:
+                          - text: "76"
+                          - generic [ref=e575]: kcal
+                      - generic [ref=e576]:
+                        - term [ref=e577]: Đạm
+                        - definition [ref=e578]:
+                          - text: "8"
+                          - generic [ref=e579]: g
+                      - generic [ref=e580]:
+                        - term [ref=e581]: Bột đường
+                        - definition [ref=e582]:
+                          - text: 1,9
+                          - generic [ref=e583]: g
+                      - generic [ref=e584]:
+                        - term [ref=e585]: Béo
+                        - definition [ref=e586]:
+                          - text: 4,8
+                          - generic [ref=e587]: g
+                - generic [ref=e588]:
+                  - img "Ảnh minh họa Rau xanh" [ref=e590]
+                  - generic [ref=e591]:
+                    - heading "Rau xanh 150 g" [level=4] [ref=e592]:
+                      - text: Rau xanh
+                      - generic [ref=e593]: 150 g
+                    - paragraph [ref=e594]: Luộc
+                    - generic [ref=e595]:
+                      - generic [ref=e596]:
+                        - term [ref=e597]: Năng lượng
+                        - definition [ref=e598]:
+                          - text: 52,5
+                          - generic [ref=e599]: kcal
+                      - generic [ref=e600]:
+                        - term [ref=e601]: Đạm
+                        - definition [ref=e602]:
+                          - text: 3,6
+                          - generic [ref=e603]: g
+                      - generic [ref=e604]:
+                        - term [ref=e605]: Bột đường
+                        - definition [ref=e606]:
+                          - text: 10,8
+                          - generic [ref=e607]: g
+                      - generic [ref=e608]:
+                        - term [ref=e609]: Béo
+                        - definition [ref=e610]:
+                          - text: 0,6
+                          - generic [ref=e611]: g
+              - generic [ref=e612]:
+                - text: Tổng bữa · ước lượng
+                - generic [ref=e613]:
+                  - generic [ref=e614]:
+                    - term [ref=e615]: Năng lượng
+                    - definition [ref=e616]:
+                      - text: 580,5
+                      - generic [ref=e617]: kcal
+                  - generic [ref=e618]:
+                    - term [ref=e619]: Đạm
+                    - definition [ref=e620]:
+                      - text: "56"
+                      - generic [ref=e621]: g
+                  - generic [ref=e622]:
+                    - term [ref=e623]: Bột đường
+                    - definition [ref=e624]:
+                      - text: 69,1
+                      - generic [ref=e625]: g
+                  - generic [ref=e626]:
+                    - term [ref=e627]: Béo
+                    - definition [ref=e628]:
+                      - text: "10"
+                      - generic [ref=e629]: g
+              - paragraph [ref=e630]: Hỗ trợ mục tiêu tăng cơ. Lựa chọn tốt cho kế hoạch tăng cơ! Bữa này có nguồn đạm ít béo và khoảng 56 g đạm, góp phần vào mục tiêu 104 g/ngày. Cứ duy trì từng bữa như vậy nhé.
+              - button "Dùng bữa gợi ý này" [ref=e631] [cursor=pointer]:
+                - text: Dùng bữa gợi ý này
+                - img [ref=e632]
+            - article [ref=e634]:
+              - generic [ref=e635]:
+                - heading "Bữa phụ" [level=3] [ref=e636]
+                - generic [ref=e637]: Tăng cơ
+              - generic [ref=e638]:
+                - generic [ref=e639]:
+                  - img "Ảnh minh họa Chuối" [ref=e641]
+                  - generic [ref=e642]:
+                    - heading "Chuối 120 g" [level=4] [ref=e643]:
+                      - text: Chuối
+                      - generic [ref=e644]: 120 g
+                    - paragraph [ref=e645]: Bỏ vỏ
+                    - generic [ref=e646]:
+                      - generic [ref=e647]:
+                        - term [ref=e648]: Năng lượng
+                        - definition [ref=e649]:
+                          - text: 106,8
+                          - generic [ref=e650]: kcal
+                      - generic [ref=e651]:
+                        - term [ref=e652]: Đạm
+                        - definition [ref=e653]:
+                          - text: 1,3
+                          - generic [ref=e654]: g
+                      - generic [ref=e655]:
+                        - term [ref=e656]: Bột đường
+                        - definition [ref=e657]:
+                          - text: 27,4
+                          - generic [ref=e658]: g
+                      - generic [ref=e659]:
+                        - term [ref=e660]: Béo
+                        - definition [ref=e661]:
+                          - text: 0,4
+                          - generic [ref=e662]: g
+                - generic [ref=e663]:
+                  - img "Ảnh minh họa Lạc" [ref=e665]
+                  - generic [ref=e666]:
+                    - heading "Lạc 25 g" [level=4] [ref=e667]:
+                      - text: Lạc
+                      - generic [ref=e668]: 25 g
+                    - paragraph [ref=e669]: Rang, bỏ vỏ
+                    - generic [ref=e670]:
+                      - generic [ref=e671]:
+                        - term [ref=e672]: Năng lượng
+                        - definition [ref=e673]:
+                          - text: 146,8
+                          - generic [ref=e674]: kcal
+                      - generic [ref=e675]:
+                        - term [ref=e676]: Đạm
+                        - definition [ref=e677]:
+                          - text: 6,1
+                          - generic [ref=e678]: g
+                      - generic [ref=e679]:
+                        - term [ref=e680]: Bột đường
+                        - definition [ref=e681]:
+                          - text: 5,3
+                          - generic [ref=e682]: g
+                      - generic [ref=e683]:
+                        - term [ref=e684]: Béo
+                        - definition [ref=e685]:
+                          - text: 12,4
+                          - generic [ref=e686]: g
+              - generic [ref=e687]:
+                - text: Tổng bữa · ước lượng
+                - generic [ref=e688]:
+                  - generic [ref=e689]:
+                    - term [ref=e690]: Năng lượng
+                    - definition [ref=e691]:
+                      - text: 253,6
+                      - generic [ref=e692]: kcal
+                  - generic [ref=e693]:
+                    - term [ref=e694]: Đạm
+                    - definition [ref=e695]:
+                      - text: 7,4
+                      - generic [ref=e696]: g
+                  - generic [ref=e697]:
+                    - term [ref=e698]: Bột đường
+                    - definition [ref=e699]:
+                      - text: 32,7
+                      - generic [ref=e700]: g
+                  - generic [ref=e701]:
+                    - term [ref=e702]: Béo
+                    - definition [ref=e703]:
+                      - text: 12,8
+                      - generic [ref=e704]: g
+              - paragraph [ref=e705]: Đối chiếu mục tiêu tăng cơ. Cân đối thêm với các bữa còn lại trong ngày.
+              - button "Dùng bữa gợi ý này" [ref=e706] [cursor=pointer]:
+                - text: Dùng bữa gợi ý này
+                - img [ref=e707]
+          - paragraph [ref=e709]: "Tổng gợi ý: 1.976 kcal; thực đơn chưa tối ưu để khớp mục tiêu."
+        - generic [ref=e710]:
+          - generic [ref=e711]:
+            - heading "Ăn quanh buổi tập" [level=2] [ref=e712]
+            - img [ref=e713]
+          - paragraph [ref=e716]:
+            - generic [ref=e717]: "1"
+            - text: "Trước 17:30: ăn bữa dễ tiêu trước buổi tập khoảng 1–2 giờ; điều chỉnh theo cảm giác của bạn."
+          - paragraph [ref=e718]:
+            - generic [ref=e719]: "2"
+            - text: "Sau buổi tập: kết hợp chất đạm và chất bột đường trong bữa kế tiếp."
+      - complementary [ref=e720]:
+        - generic [ref=e721]:
+          - heading "Đã ghi nhận" [level=2] [ref=e722]
+          - generic [ref=e723]: 0 bữa
+        - paragraph [ref=e724]: Trong ngày đang chọn
+        - generic [ref=e725]:
+          - strong [ref=e726]: "0"
+          - generic [ref=e727]: kcal đã ghi
+        - generic [ref=e728]:
+          - generic [ref=e729]:
+            - generic [ref=e730]:
+              - generic [ref=e731]: Năng lượng
+              - strong [ref=e732]: 0 / 2.620 kcal
+            - progressbar "Năng lượng" [ref=e733]
+          - generic [ref=e734]:
+            - generic [ref=e735]:
+              - generic [ref=e736]: Chất đạm
+              - strong [ref=e737]: 0 / 104 g
+            - progressbar "Chất đạm" [ref=e738]
+          - generic [ref=e739]:
+            - generic [ref=e740]:
+              - generic [ref=e741]: Bột đường
+              - strong [ref=e742]: 0 / 387 g
+            - progressbar "Bột đường" [ref=e743]
+          - generic [ref=e744]:
+            - generic [ref=e745]:
+              - generic [ref=e746]: Chất béo
+              - strong [ref=e747]: 0 / 73 g
+            - progressbar "Chất béo" [ref=e748]
+        - paragraph [ref=e749]: Còn khoảng 2.360–2.620 kcal theo kế hoạch. Nhật ký chưa đủ bữa nên chưa thể kết luận cả ngày thiếu hoặc thừa.
+        - button "Thêm bữa ăn" [ref=e750] [cursor=pointer]:
+          - img [ref=e751]
+          - text: Thêm bữa ăn
+        - generic [ref=e752]:
+          - img [ref=e753]
+          - paragraph [ref=e756]:
+            - text: Chưa có bữa nào.
+            - text: Bắt đầu từ bữa ăn gần nhất nhé.
+    - group [ref=e757]:
+      - generic "Cách tính và nguồn tham khảo" [ref=e758] [cursor=pointer]
+    - generic [ref=e759]:
+      - img [ref=e760]
+      - paragraph [ref=e763]: Chỉ để tham khảo, không thay bác sĩ hoặc chuyên gia dinh dưỡng; không chẩn đoán, kê đơn hay hướng dẫn ngừng thuốc. Ước lượng có giới hạn. Dữ liệu và ảnh bạn tải lên chỉ giữ trong phiên này, mất khi tải lại hoặc xóa phiên.
+    - group [ref=e764]:
+      - generic "Nguồn ảnh minh họa món ăn" [ref=e765] [cursor=pointer]
+  - generic [ref=e766]:
+    - region "Vi, trợ lý 3D đồng hành" [ref=e767]:
+      - generic [ref=e768]:
+        - generic [ref=e770]: Luôn ở đây cùng bạn
+        - img [ref=e771]
+      - generic [ref=e774]:
+        - heading "Chào bạn, mình là Vi." [level=2] [ref=e775]
+        - paragraph [ref=e776]:
+          - text: Cùng bạn ăn tốt,
+          - text: tập đúng nhịp.
+      - img "Trợ lý Vi 3D mặc đồ thể thao xanh và cam, chuyển động và chào bạn" [ref=e777]
+      - generic [ref=e779]:
+        - button "Chào Vi" [ref=e780] [cursor=pointer]:
+          - img [ref=e781]
+          - text: Chào Vi
+        - button "Tạm dừng chuyển động" [ref=e786] [cursor=pointer]:
+          - img [ref=e787]
+    - complementary "Trò chuyện với trợ lý Vi" [ref=e790]:
+      - generic [ref=e791]:
+        - img [ref=e793]
+        - generic [ref=e795]:
+          - heading "Trò chuyện với Vi" [level=2] [ref=e796]
+          - paragraph [ref=e797]: Trợ lý dinh dưỡng · demo
+        - img [ref=e799]
+      - generic [ref=e802]: Hội thoại mô phỏng, chưa gọi AI hoặc phân tích ảnh.
+      - log "Lịch sử trò chuyện" [ref=e803]:
+        - generic [ref=e804]:
+          - generic [ref=e805]: Vi
+          - paragraph [ref=e807]: Chào bạn! Mình là Vi, bạn đồng hành dinh dưỡng. Cùng lên kế hoạch theo nhịp tập nhé. Trước tiên, bạn bao nhiêu tuổi, nặng bao nhiêu kg và cao bao nhiêu cm?
+        - paragraph [ref=e810]: 17 tuổi, 65 kg, 170 cm
+        - generic [ref=e811]:
+          - generic [ref=e812]: Vi
+          - paragraph [ref=e814]: Người dưới 18 tuổi cần chuyên gia hướng dẫn. Mình không tạo kế hoạch tự động; bạn có thể tham khảo thông tin chung cùng phụ huynh hoặc chuyên gia.
+        - paragraph [ref=e817]: 25 tuổi, 65 kg, 170 cm
+        - generic [ref=e818]:
+          - generic [ref=e819]: Vi
+          - paragraph [ref=e821]: Mình đã ghi 25 tuổi, 65 kg, 170 cm. Bạn muốn dùng biến thể nào trong công thức năng lượng? Nếu không cung cấp giới tính, mình sẽ giữ kết quả theo khoảng.
+        - paragraph [ref=e824]: Không cung cấp
+        - generic [ref=e825]:
+          - generic [ref=e826]: Vi
+          - paragraph [ref=e828]: Cảm ơn bạn. Mục tiêu hiện tại của bạn là gì?
+        - paragraph [ref=e831]: Tăng cơ
+        - generic [ref=e832]:
+          - generic [ref=e833]: Vi
+          - paragraph [ref=e835]: Bạn thường tập theo hình thức nào?
+        - paragraph [ref=e838]: Tập sức mạnh
+        - generic [ref=e839]:
+          - generic [ref=e840]: Vi
+          - paragraph [ref=e842]: Cường độ tập của bạn thường ở mức nào?
+        - paragraph [ref=e845]: Vừa
+        - generic [ref=e846]:
+          - generic [ref=e847]: Vi
+          - paragraph [ref=e849]: Chọn những ngày bạn tập và giờ bắt đầu. Các ngày còn lại là ngày phục hồi. Bạn có thể chỉnh lại sau.
+        - paragraph [ref=e852]: Xác nhận lịch tập
+        - generic [ref=e853]:
+          - generic [ref=e854]: Vi
+          - paragraph [ref=e856]: 2 buổi / tuần, 17:30, 60 phút mỗi buổi. Đây là kế hoạch tham khảo mình đề xuất. Xem mục tiêu và cách tính bên dưới; bạn có thể quay lại sửa, hoặc đồng ý để bắt đầu.
+        - paragraph [ref=e859]: Đồng ý kế hoạch
+        - paragraph [ref=e862]: Ức gà 150 g có bao nhiêu calo?
+        - generic [ref=e863]:
+          - generic [ref=e864]: Vi
+          - paragraph [ref=e866]: "Ức gà, luộc, bỏ da, 150 g: khoảng 248 kcal; đạm 47 g, bột đường 0 g, béo 5 g. Thông tin dinh dưỡng chỉ để tham khảo, không hoàn toàn chính xác. Giá trị thay đổi theo nguyên liệu, khẩu phần và cách chế biến; dữ liệu hiện tại chưa kiểm chứng, không thay thế tư vấn chuyên gia. Nếu dùng khẩu phần này: Lựa chọn tốt cho kế hoạch tăng cơ! Bữa này có nguồn đạm ít béo và khoảng 47 g đạm, góp phần vào mục tiêu 104 g/ngày. Cứ duy trì từng bữa như vậy nhé. Đây là phản hồi mô phỏng, chưa gọi AI. Nếu muốn lưu vào nhật ký, chọn “Ghi bữa ăn”."
+        - paragraph [ref=e869]: đau ngực khi tập
+        - generic [ref=e870]:
+          - generic [ref=e871]: Vi
+          - paragraph [ref=e873]: Đau ngực, khó thở hoặc ngất khi tập có thể nguy hiểm. Dừng tập, nhờ người hỗ trợ và liên hệ cơ sở y tế; nếu đang có triệu chứng nặng hãy gọi 115. Mình không thể đánh giá cấp cứu qua chat.
+      - generic [ref=e875]:
+        - button "Ức gà 150 g?" [ref=e876] [cursor=pointer]
+        - button "Ăn trước khi tập" [ref=e877] [cursor=pointer]
+        - button "Ghi bữa ăn" [ref=e878] [cursor=pointer]:
+          - img [ref=e879]
+          - text: Ghi bữa ăn
+      - generic [ref=e882]:
+        - alert [ref=e883]: Kh?ng ??c ???c ?nh. Ch?n ?nh kh?c ho?c nh?p m? t?.
+        - generic [ref=e884]:
+          - generic [ref=e885]: Tin nhắn cho Vi
+          - textbox "Tin nhắn cho Vi" [ref=e886]:
+            - /placeholder: Nhắn cho Vi…
+          - generic [ref=e887]:
+            - button "Đính kèm ảnh món ăn" [ref=e888] [cursor=pointer]:
+              - img [ref=e889]
+            - generic [ref=e892]: Ảnh tối đa 5 MB
+            - button "Gửi tin nhắn" [disabled] [ref=e893]:
+              - img [ref=e894]
+        - paragraph [ref=e897]: Thông tin và ảnh chỉ giữ trong phiên này.
+```

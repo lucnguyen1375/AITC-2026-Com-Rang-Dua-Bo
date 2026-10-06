@@ -1,0 +1,82 @@
+import type { UserProfile, DailyPlan, MealAnalysis, ChatPlanContext, PlanUpdate } from '../types';
+import { validPlanUpdate } from './planUpdates';
+import { foodItem, foods } from '../data/foods';
+import { recalculateMeal } from './nutrition';
+import { safetyResponse } from './chat';
+import { assessMeal } from './mealAlignment';
+export { createPlan, recalculateMeal } from './nutrition';
+export const assistantMode: 'demo' | 'api' = 'api';
+
+export type ChatProfileField = 'age' | 'sex' | 'height' | 'weight' | 'goal' | 'training_type' | 'intensity' | 'sessions' | 'schedule';
+export type ChatMessage = { role: 'user' | 'assistant'; text: string; image?: string };
+export type ChatProfileAnswers = Partial<Record<ChatProfileField, string>>;
+export type ChatReply = { reply: string; profile_request?: ChatProfileField[]; plan_updates?: PlanUpdate[] };
+
+const profileFieldSet = new Set<ChatProfileField>(['age', 'sex', 'height', 'weight', 'goal', 'training_type', 'intensity', 'sessions', 'schedule']);
+
+/** Keep the app's versioned local JSON shape and adapt it to chat-core's role/content contract. */
+export async function requestNutritionChat(messages: ChatMessage[], profile?: UserProfile, profileAnswers?: ChatProfileAnswers, planContext?: ChatPlanContext): Promise<ChatReply> {
+ const context = profile ? [{ role: 'assistant' as const, content: `Hồ sơ dinh dưỡng do người dùng khai báo trong ứng dụng (JSON): ${JSON.stringify(profile)}` }] : [];
+ const recent = messages
+  .filter(message => message.text.trim() || message.image)
+  .slice(-(80 - context.length))
+  .map(message => ({ role: message.role, text: message.text || 'Ước lượng dinh dưỡng bữa ăn trong ảnh này.', image: message === messages.at(-1) && message.role === 'user' ? message.image : undefined }));
+ const conversation: { role: 'user' | 'assistant'; content: string; image?: string }[] = [];
+ let remainingChars = 28000;
+ for (let index = recent.length - 1; index >= 0 && remainingChars > 0; index--) {
+  const message = recent[index];
+  const limit = message.role === 'user' ? 4000 : 20000;
+  const content = message.text.slice(-Math.min(limit, remainingChars));
+  conversation.unshift({ role: message.role, content, ...(message.image ? { image: message.image } : {}) });
+  remainingChars -= content.length;
+ }
+ const payload: { messages: typeof conversation; profile_answers?: ChatProfileAnswers; plan_context?: ChatPlanContext } = { messages: [...context, ...conversation] };
+ if (planContext) payload.plan_context = planContext;
+ if (profileAnswers) {
+  payload.profile_answers = Object.fromEntries(
+   Object.entries(profileAnswers).filter(([field, value]) => profileFieldSet.has(field as ChatProfileField) && typeof value === 'string' && value.trim()),
+  ) as ChatProfileAnswers;
+ }
+
+ let response: Response;
+ try {
+  response = await fetch('/api/chat', {
+   method: 'POST',
+   headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify(payload),
+  });
+ } catch {
+  throw new Error('Không kết nối được máy chủ chat. Hãy kiểm tra backend rồi thử lại.');
+ }
+ let result: unknown;
+ try { result = await response.json(); }
+ catch { throw new Error('Máy chủ chat trả về dữ liệu không hợp lệ. Hãy thử lại.'); }
+ if (!response.ok) {
+  const message = result && typeof result === 'object' && 'error' in result && typeof result.error === 'string'
+   ? result.error
+   : 'Chưa kết nối được trợ lý dinh dưỡng. Hãy thử lại.';
+  throw new Error(message);
+ }
+ if (!result || typeof result !== 'object' || !('reply' in result) || typeof result.reply !== 'string') {
+  throw new Error('Máy chủ chat trả về dữ liệu không hợp lệ. Hãy thử lại.');
+ }
+ const requested = 'profile_request' in result && Array.isArray(result.profile_request)
+  ? result.profile_request.filter((field): field is ChatProfileField => typeof field === 'string' && profileFieldSet.has(field as ChatProfileField))
+  : undefined;
+ const updates = 'plan_updates' in result ? result.plan_updates : undefined;
+ if (updates !== undefined && (!Array.isArray(updates) || updates.length > 14 || !updates.every(validPlanUpdate))) throw new Error('Trợ lý trả về thay đổi checklist không hợp lệ. Hãy thử lại.');
+ return { reply: result.reply, profile_request: requested, plan_updates: updates as PlanUpdate[] | undefined };
+}
+
+export async function analyzeMeal(input: { description: string; image?: File; profile?: UserProfile; plan?: DailyPlan }): Promise<MealAnalysis> {
+ if (!input.description.trim()) throw new Error('Hãy mô tả thành phần bữa ăn để tiếp tục.');
+ const safety = safetyResponse(input.description);
+ if (safety) throw new Error(safety);
+ const text = input.description.toLocaleLowerCase('vi');
+ const matches = foods.filter(food => text.includes(food.name.toLocaleLowerCase('vi')));
+ const result = recalculateMeal(matches.map(food => foodItem(food.id, null)));
+ if (!matches.length) result.advice = ['Chưa đủ thông tin để ước lượng. Hãy chọn thực phẩm và nhập khối lượng ở bên dưới.'];
+ if (input.image) result.assumptions.push('Ảnh chỉ được xem trước trên thiết bị; chưa phân tích ảnh bằng AI.');
+ if (input.profile && input.plan) result.advice.push(assessMeal(result, input.profile, input.plan).message);
+ return result;
+}

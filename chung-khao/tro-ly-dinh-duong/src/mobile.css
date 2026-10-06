@@ -1,0 +1,28 @@
+/* Dedicated /mobile preview shares the same JSON data and application flows. */
+.mobile-route body{background:var(--blue-light)}
+.mobile-workspace{display:block;max-width:480px;margin-inline:auto;height:auto;min-height:100dvh;overflow:visible;background:var(--paper,#fff);padding-bottom:96px}
+.mobile-workspace>.sidebar{display:none}
+.mobile-workspace [hidden]{display:none!important}
+.mobile-workspace .workspace-main{padding:22px 18px;overflow:visible}
+.mobile-workspace .main-topline{font-size:12px;flex-wrap:wrap}
+.mobile-workspace .session-note,.mobile-workspace .mobile-chat-link{display:none}
+.mobile-workspace .plan-layout,.mobile-workspace .meal-layout,.mobile-workspace .fields{grid-template-columns:1fr}
+.mobile-workspace .page-heading{flex-wrap:wrap;gap:12px}
+.mobile-workspace .page-heading h1{font-size:28px}
+.mobile-workspace .assistant-area{display:block;height:auto}
+.mobile-workspace .coach-stage{display:none}
+.mobile-workspace .chat-panel{height:calc(100dvh - 110px);min-height:540px;border-inline:0}
+.mobile-workspace .chat-composer textarea{font-size:16px}
+.mobile-workspace .profile-layout{display:block}
+.mobile-workspace .intro-panel{display:none}
+.mobile-workspace .number-field input,.mobile-workspace select,.mobile-workspace textarea{font-size:16px}
+.mobile-photo-prompt{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.mobile-photo-prompt h2{font-size:20px;margin:0 0 8px}.mobile-photo-prompt p{font-size:14px;margin:0}
+.mobile-photo-prompt button{display:grid;place-items:center;flex:none;width:48px;height:48px;background:var(--blue);color:white;border:0;border-radius:12px}
+.mobile-navigation{position:fixed;z-index:40;bottom:0;inset-inline:0;max-width:480px;margin-inline:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;background:white;border-top:1px solid var(--line);padding:10px 6px calc(10px + env(safe-area-inset-bottom))}
+.mobile-navigation button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border:0;background:transparent;color:var(--muted);min-height:54px;padding:4px;font-size:12px}
+.mobile-navigation button[aria-current=page]{color:var(--blue);font-weight:700}
+.mobile-navigation .mobile-capture{background:var(--blue);color:white;border-radius:16px;min-height:54px;width:54px;justify-self:center}
+.mobile-navigation button:hover{color:var(--blue)}.mobile-navigation .mobile-capture:hover{background:var(--ink);color:white}
+.mobile-route .onboarding-screen,.mobile-route .manual-onboarding{max-width:480px;margin-inline:auto;background:white}
+.mobile-route .onboarding-experience{display:block}.mobile-route .onboarding-coach{display:none}

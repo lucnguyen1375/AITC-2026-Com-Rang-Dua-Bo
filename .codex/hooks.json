@@ -22,6 +22,18 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f 'C:\\Users\\DELL\\.agents\\skills\\impeccable\\scripts\\impeccable' ] || 'C:\\Users\\DELL\\.agents\\skills\\impeccable\\scripts\\impeccable' hook",
+            "commandWindows": "if exist \"C:\\\\Users\\\\DELL\\\\.agents\\\\skills\\\\impeccable\\\\scripts\\\\impeccable.cmd\" (\"C:\\\\Users\\\\DELL\\\\.agents\\\\skills\\\\impeccable\\\\scripts\\\\impeccable.cmd\" hook & exit /b)",
+            "timeout": 5,
+            "statusMessage": "Checking UI changes"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -32,6 +44,17 @@
             "type": "command",
             "command": "bash scripts/_pyrun.sh scripts/log_hook.py --tool=codex",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f 'C:\\Users\\DELL\\.agents\\skills\\impeccable\\scripts\\impeccable' ] || 'C:\\Users\\DELL\\.agents\\skills\\impeccable\\scripts\\impeccable' hook",
+            "commandWindows": "if exist \"C:\\\\Users\\\\DELL\\\\.agents\\\\skills\\\\impeccable\\\\scripts\\\\impeccable.cmd\" (\"C:\\\\Users\\\\DELL\\\\.agents\\\\skills\\\\impeccable\\\\scripts\\\\impeccable.cmd\" hook & exit /b)",
+            "timeout": 30,
+            "statusMessage": "Design deep pass"
           }
         ]
       }
