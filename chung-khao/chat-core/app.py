@@ -15,6 +15,10 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 import chatbot
+
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+HTML_FILE = Path(__file__).resolve().parent / "static" / "index.html"
+MAX_BODY_BYTES = 128 * 1024
 from onboarding import router as onboarding_router
 from plan_actions import PlanContext, PlanUpdate, PLAN_INSTRUCTIONS, VISION_INSTRUCTIONS, extract_plan_updates
 
@@ -111,6 +115,10 @@ class ChatResponse(BaseModel):
 
 @app.middleware("http")
 async def response_headers_and_body_limit(request: Request, call_next):
+    if request.method == "POST" and request.url.path == "/api/chat":
+        body = await request.body()
+        if len(body) > MAX_BODY_BYTES:
+            return JSONResponse(status_code=413, content={"error": "Hội thoại quá dài. Bạn hãy bắt đầu lại."}, headers={"Cache-Control": "no-store"})
     if request.method == "POST" and request.url.path in {"/api/chat", "/api/onboarding"}:
         body = await request.body()
         limit = MAX_CHAT_BODY_BYTES if request.url.path == "/api/chat" else MAX_BODY_BYTES
@@ -153,6 +161,7 @@ async def chat(payload: ChatRequest, request: Request):
         if origin_host != request.headers.get("host"):
             raise HTTPException(403, "Nguồn yêu cầu không hợp lệ.")
     try:
+        messages = [message.model_dump() for message in payload.messages]
         messages = [message.model_dump(exclude_none=True) for message in payload.messages]
         profile_completion = payload.profile_answers is not None
         if payload.profile_answers:
@@ -171,6 +180,8 @@ async def chat(payload: ChatRequest, request: Request):
             answers = payload.profile_answers.model_dump(exclude_none=True)
             details = "\n".join(f"- {labels[key]}: {value}" for key, value in answers.items())
             messages[-1]["content"] = "Thông tin bổ sung từ biểu mẫu (người dùng tự khai):\n" + details
+        reply = await chatbot.ask_assistant(messages, profile_completion=profile_completion)
+        reply, requested_fields = chatbot.extract_profile_request(reply)
         instructions = chatbot.INSTRUCTIONS.replace("Phiên bản này chỉ nhận văn bản, chưa phân tích ảnh.", "") + VISION_INSTRUCTIONS
         if profile_completion:
             instructions += chatbot.PROFILE_COMPLETION_INSTRUCTIONS
@@ -190,6 +201,7 @@ async def chat(payload: ChatRequest, request: Request):
         return JSONResponse(status_code=502, content={"error": "Dịch vụ chưa thể trả lời. Bạn hãy thử lại."})
     if profile_completion:
         requested_fields = []
+    return ChatResponse(reply=reply, profile_request=requested_fields or None)
     return ChatResponse(reply=reply, profile_request=requested_fields or None, plan_updates=updates or None)
 
 
