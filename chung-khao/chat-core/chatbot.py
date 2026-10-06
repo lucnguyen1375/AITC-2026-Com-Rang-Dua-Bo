@@ -1,4 +1,4 @@
-"""Gọi API Thực Chiến và cung cấp chỉ dẫn tư vấn dinh dưỡng."""
+"""Gọi OpenAI Responses API và cung cấp chỉ dẫn tư vấn dinh dưỡng."""
 
 import asyncio
 import json
@@ -10,13 +10,12 @@ import httpx
 from dotenv import load_dotenv
 
 ROOT_ENV = Path(__file__).resolve().parents[2] / ".env"
-# Dự án dùng khóa trong .env gốc, không để khóa thử nghiệm của máy ghi đè.
-load_dotenv(ROOT_ENV, override=True)
+# Render cung cấp biến môi trường riêng; chỉ nạp .env cục bộ khi biến chưa được đặt.
+load_dotenv(ROOT_ENV, override=False)
 
-API_KEY = os.getenv("THUCCHIEN_API_KEY", "").strip()
-BASE_URL = os.getenv("THUCCHIEN_BASE_URL", "https://api.thucchien.ai/v1").rstrip("/")
-MODEL = "gpt-6-luna"
-REASONING_EFFORT = "none"
+API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
+BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
 REQUEST_TIMEOUT = 45.0
 PROFILE_FIELDS = ("age", "sex", "height", "weight", "goal", "training_type", "intensity", "sessions", "schedule")
 PROFILE_FIELD_SET = frozenset(PROFILE_FIELDS)
@@ -140,7 +139,6 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
                     headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
                     json={
                         "model": MODEL,
-                        "reasoning": {"effort": REASONING_EFFORT},
                         "instructions": instructions if instructions is not None else INSTRUCTIONS + (PROFILE_COMPLETION_INSTRUCTIONS if profile_completion else ""),
                         "input": messages,
                         "stream": False,
@@ -156,7 +154,7 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
                 if response.status_code == 404:
                     raise ChatbotError(502, "Chưa truy cập được mô hình hoặc địa chỉ API đã cấu hình.")
                 if response.status_code == 400:
-                    raise ChatbotError(502, "Dịch vụ AI từ chối yêu cầu (HTTP 400). Cần kiểm tra địa chỉ Gateway và cấu hình mô hình trên máy chủ.")
+                    raise ChatbotError(502, "Dịch vụ AI từ chối yêu cầu (HTTP 400). Cần kiểm tra cấu hình mô hình và yêu cầu gửi lên máy chủ.")
                 if not response.is_success:
                     raise ChatbotError(502, "Dịch vụ AI tạm thời chưa trả lời được. Bạn hãy thử lại.")
                 try:

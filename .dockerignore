@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+node_modules
+**/node_modules
+**/dist
+**/__pycache__
+**/.pytest_cache
+**/test-results
+.pnpm-store
+.ai-log

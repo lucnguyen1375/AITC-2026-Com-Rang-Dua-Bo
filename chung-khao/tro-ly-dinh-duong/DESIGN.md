@@ -278,7 +278,7 @@ Desktop workspace navigation is an icon-plus-label column on a white sidebar. It
 
 ### Conversation and Vi
 
-Assistant speech uses the cool bubble fill; user speech uses cobalt and white. Messages wrap long text and retain the asymmetric silhouette. Questions, options, and text entry share the conversation surface. Errors appear in text with a retry control. Live BTC Gateway requests currently return HTTP400; this design documentation does not assert a successful live AI response.
+Assistant speech uses the cool bubble fill; user speech uses cobalt and white. Messages wrap long text and retain the asymmetric silhouette. Questions, options, and text entry share the conversation surface. Errors appear in text with a retry control. Live requests use the OpenAI API configured on the backend; this design documentation does not assert a successful live AI response.
 
 Vi repeats the brand palette in a rounded sports character against a pale blue stage. Wave and pause controls are visible, and a text/SVG fallback keeps the companion region usable when WebGL is unavailable. The stage starts directly with Vi's greeting; the former availability eyebrow has been removed.
 

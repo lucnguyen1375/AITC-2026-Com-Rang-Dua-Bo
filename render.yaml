@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bua-viet
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: OPENAI_BASE_URL
+        value: https://api.openai.com/v1

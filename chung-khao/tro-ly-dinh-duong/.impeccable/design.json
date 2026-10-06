@@ -390,7 +390,7 @@
         "src/components/CoachAvatar.tsx",
         "src/components/AssistantChat.tsx"
       ],
-      "review": "Desktop source extraction; live BTC Gateway requests currently return HTTP400 and successful AI runtime is not verified. Smaller-screen behavior was outside this pass.",
+      "review": "Desktop source extraction; live OpenAI requests and successful AI runtime are not verified. Smaller-screen behavior was outside this pass.",
       "tonalRamps": "Preview-only OKLCH ramps synthesized from extracted source hex values; frontmatter colors remain normative."
     }
   },

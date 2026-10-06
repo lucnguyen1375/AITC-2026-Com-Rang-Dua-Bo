@@ -44,8 +44,8 @@ test('AI chưa đủ hồ sơ hoặc dưới 18 tuổi không thể mở kế ho
  await page.route('**/api/onboarding',route=>route.fulfill({json:{reply:'Người dưới 18 tuổi cần chuyên gia hướng dẫn.',profile:{age:17},questions:[],ready:false,blocked:true}}));
  await page.goto('/');await page.getByRole('button',{name:'Bắt đầu với Vi'}).click();await expect(page.getByText('Người dưới 18 tuổi cần chuyên gia hướng dẫn.',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Đồng ý kế hoạch',exact:true})).toHaveCount(0);await expect(page.locator('.sidebar')).toHaveCount(0);
 });
-test('Gateway BTC thật: sinh textbox và trích hồ sơ để tạo đề xuất',async({page})=>{
- test.skip(process.env.RUN_BTC_LIVE!=='1','Chỉ gọi Gateway khi yêu cầu chạy kiểm tra tích hợp thật.');
+test('OpenAI thật: sinh textbox và trích hồ sơ để tạo đề xuất',async({page})=>{
+ test.skip(process.env.RUN_OPENAI_LIVE!=='1','Chỉ gọi OpenAI khi yêu cầu chạy kiểm tra tích hợp thật.');
  test.setTimeout(140000);
  await page.setViewportSize({width:1440,height:1000});await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
  await page.getByRole('button',{name:'Bắt đầu với Vi'}).click();

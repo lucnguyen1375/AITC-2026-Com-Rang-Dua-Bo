@@ -1,4 +1,4 @@
-"""Kiểm tra hợp đồng API và lỗi gateway bằng HTTP giả lập."""
+"""Kiểm tra hợp đồng OpenAI API và lỗi nhà cung cấp bằng HTTP giả lập."""
 
 import asyncio
 import json
@@ -15,7 +15,8 @@ from app import app, MAX_CHAT_BODY_BYTES
 @pytest.fixture(autouse=True)
 def fake_configuration(monkeypatch):
     monkeypatch.setattr(chatbot, "API_KEY", "fake-test-key")
-    monkeypatch.setattr(chatbot, "BASE_URL", "https://gateway.example/v1")
+    monkeypatch.setattr(chatbot, "BASE_URL", "https://openai.example/v1")
+    monkeypatch.setattr(chatbot, "MODEL", "gpt-4.1-mini")
 
 
 @pytest.fixture
@@ -24,7 +25,7 @@ def client():
         yield test_client
 
 
-def mock_gateway(monkeypatch, handler):
+def mock_openai(monkeypatch, handler):
     real_client = httpx.AsyncClient
     transport = httpx.MockTransport(handler)
     monkeypatch.setattr(chatbot.httpx, "AsyncClient", lambda **kwargs: real_client(transport=transport, **kwargs))
@@ -49,7 +50,7 @@ def test_responses_contract_and_history(client, monkeypatch):
         result["output"][1]["content"].append({"type": "output_text", "text": "Phần hai."})
         return httpx.Response(200, json=result)
 
-    mock_gateway(monkeypatch, upstream)
+    mock_openai(monkeypatch, upstream)
     messages = [
         {"role": "user", "content": "Tôi 25 tuổi."},
         {"role": "assistant", "content": "Mục tiêu của bạn là gì?"},
@@ -60,10 +61,10 @@ def test_responses_contract_and_history(client, monkeypatch):
     assert response.json() == {"reply": "Phần một.\nPhần hai."}
     request = captured[0]
     payload = json.loads(request.content)
-    assert str(request.url) == "https://gateway.example/v1/responses"
+    assert str(request.url) == "https://openai.example/v1/responses"
     assert request.headers["authorization"] == "Bearer fake-test-key"
-    assert payload["model"] == "gpt-6-luna"
-    assert payload["reasoning"] == {"effort": "none"}
+    assert payload["model"] == "gpt-4.1-mini"
+    assert "reasoning" not in payload
     assert payload["store"] is False and payload["stream"] is False
     assert payload["input"] == [*messages[:-1], {"role": "user", "content": "Tăng cơ."}]
     assert "Mifflin" in payload["instructions"]
@@ -91,8 +92,8 @@ def test_invalid_json_and_body_limit(client):
 
 
 @pytest.mark.parametrize("code, expected", [(401, 502), (403, 502), (404, 502), (429, 429), (500, 502)])
-def test_gateway_error_is_sanitized(client, monkeypatch, code, expected):
-    mock_gateway(monkeypatch, lambda request: httpx.Response(code, text="fake-test-key provider-debug-secret"))
+def test_provider_error_is_sanitized(client, monkeypatch, code, expected):
+    mock_openai(monkeypatch, lambda request: httpx.Response(code, text="fake-test-key provider-debug-secret"))
     response = client.post("/api/chat", json={"messages": [{"role": "user", "content": "Xin chào"}]})
     assert response.status_code == expected
     assert "error" in response.json()
@@ -106,12 +107,12 @@ def test_gateway_error_is_sanitized(client, monkeypatch, code, expected):
     {"output": "bad shape"}, None,
 ])
 def test_invalid_provider_response(client, monkeypatch, result):
-    mock_gateway(monkeypatch, lambda request: httpx.Response(200, json=result))
+    mock_openai(monkeypatch, lambda request: httpx.Response(200, json=result))
     assert client.post("/api/chat", json={"messages": [{"role": "user", "content": "Xin chào"}]}).status_code == 502
 
 
 def test_bad_json_from_provider(client, monkeypatch):
-    mock_gateway(monkeypatch, lambda request: httpx.Response(200, text="not json"))
+    mock_openai(monkeypatch, lambda request: httpx.Response(200, text="not json"))
     assert client.post("/api/chat", json={"messages": [{"role": "user", "content": "Xin chào"}]}).status_code == 502
 
 
@@ -121,7 +122,7 @@ def test_total_timeout(client, monkeypatch):
         return httpx.Response(200, json=response_output())
 
     monkeypatch.setattr(chatbot, "REQUEST_TIMEOUT", 0.01)
-    mock_gateway(monkeypatch, delayed)
+    mock_openai(monkeypatch, delayed)
     assert client.post("/api/chat", json={"messages": [{"role": "user", "content": "Xin chào"}]}).status_code == 504
 
 
@@ -129,7 +130,7 @@ def test_network_failure(client, monkeypatch):
     def disconnected(request):
         raise httpx.ConnectError("provider-debug-secret", request=request)
 
-    mock_gateway(monkeypatch, disconnected)
+    mock_openai(monkeypatch, disconnected)
     response = client.post("/api/chat", json={"messages": [{"role": "user", "content": "Xin chào"}]})
     assert response.status_code == 502 and "provider-debug-secret" not in response.text
 

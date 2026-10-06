@@ -1,6 +1,6 @@
 # Chatbot tư vấn dinh dưỡng
 
-Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi mô hình AI Thực Chiến. API `/api/chat` được đấu nối với giao diện React trong `chung-khao/tro-ly-dinh-duong`; `static/index.html` vẫn có thể dùng để chạy thử backend độc lập.
+Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi OpenAI Responses API. API `/api/chat` được đấu nối với giao diện React trong `chung-khao/tro-ly-dinh-duong`; `static/index.html` vẫn có thể dùng để chạy thử backend độc lập.
 
 Đây là công cụ tham khảo, không phải dịch vụ y tế. API chat có thể nhận ảnh món ăn để tư vấn; endpoint riêng phân tích ảnh trả về tên món và khối lượng tham khảo. Không phân tích ảnh cơ thể.
 
@@ -30,7 +30,7 @@ python -m pip install -r requirements.txt
 python app.py
 ```
 
-Mở http://localhost:3000. Có thể chọn cổng bằng biến `CHAT_PORT`.
+Mở http://localhost:3000. Ở máy cá nhân có thể chọn cổng bằng biến `CHAT_PORT`; Render tự cấp biến `PORT`.
 
 ## Chạy cùng giao diện Bữa Việt
 
@@ -44,17 +44,17 @@ pnpm dev
 
 Vite chuyển tiếp `/api/*` tới FastAPI mà không đưa khóa API vào trình duyệt. Khi triển khai, chuyển tiếp `/api/chat` và `/api/analyze-meal` tới FastAPI. Chat gửi hội thoại/hồ sơ đã khai báo tới dịch vụ AI. Khi người dùng chủ động bấm Phân tích ảnh, ảnh món ăn đã thu nhỏ được gửi qua backend tới nhà cung cấp AI; backend không lưu ảnh hoặc ghi ảnh/nội dung vào log. Không gửi ảnh cơ thể.
 
-Ứng dụng đọc `.env` ở thư mục gốc của repository, không phụ thuộc thư mục terminal. Cấu hình cần có:
+Sao chép `.env.example` thành `.env` ở thư mục gốc repository rồi điền khóa OpenAI của bạn:
 
 ```dotenv
-THUCCHIEN_API_KEY=<khóa API của đội>
-THUCCHIEN_BASE_URL=https://api.thucchien.ai/v1
-CHAT_PORT=3000
+OPENAI_API_KEY=<khóa OpenAI của bạn>
+OPENAI_MODEL=gpt-4.1-mini
+OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
-Không đưa khóa vào frontend hoặc chia sẻ/commit tệp `.env`. Khóa chỉ được dùng ở backend. Máy chủ không ghi nội dung hội thoại hoặc khóa vào log ứng dụng.
+Không đưa khóa vào frontend hoặc commit tệp `.env`. Khóa chỉ được dùng ở backend. Máy chủ không ghi nội dung hội thoại hoặc khóa vào log ứng dụng. Khi chạy trong Render, cấu hình `OPENAI_API_KEY` ở phần Environment của service; Render tự cấp biến `PORT`.
 
-Để mở thử trên điện thoại cùng mạng Wi-Fi, đặt `CHAT_HOST=0.0.0.0` trước khi chạy và truy cập `http://<địa chỉ IP máy tính>:3000`. Đây là máy chủ thử nghiệm, chưa có đăng nhập hoặc giới hạn lượt gọi riêng; chỉ dùng trong mạng tin cậy.
+Máy chủ mặc định lắng nghe trên `0.0.0.0`; có thể mở thử trên điện thoại cùng mạng Wi-Fi bằng `http://<địa chỉ IP máy tính>:3000`. Đây là máy chủ thử nghiệm, chưa có đăng nhập hoặc giới hạn lượt gọi riêng; chỉ dùng trong mạng tin cậy.
 
 ## API nội bộ
 
@@ -100,7 +100,7 @@ Ví dụ phần bổ sung khi gửi biểu mẫu:
 
 API chỉ nhận vai trò `user` và `assistant`; tin nhắn cuối phải là `user`. Giới hạn mỗi tin nhắn người dùng là 4.000 ký tự, tối đa 80 tin nhắn và kích thước phần thân `/api/chat` là 2 MB; `/api/analyze-meal` nhận tối đa 768 KiB ảnh JPEG sau giải mã.
 
-Mọi lượt gọi AI (chat, onboarding, chat kèm ảnh và phân tích ảnh món ăn) dùng `gpt-6-luna` với `reasoning.effort: none` để ưu tiên tốc độ. Backend gọi `POST /v1/responses` với `store: false`, `stream: false`, thời gian chờ tổng cộng 45 giây. Backend đọc mọi phần `output_text` trong thông điệp trợ lý, không dựa vào vị trí cố định trong mảng `output`. Các lỗi xác thực, giới hạn lượt gọi, hết thời gian và lỗi mạng được chuyển thành thông báo tiếng Việt.
+Mọi lượt gọi AI (chat, onboarding, chat kèm ảnh và phân tích ảnh món ăn) dùng `OPENAI_MODEL` (mặc định `gpt-4.1-mini`). Backend gọi Responses API tại `OPENAI_BASE_URL` (mặc định OpenAI) với `store: false`, `stream: false`, thời gian chờ tổng cộng 45 giây. Backend đọc mọi phần `output_text` trong thông điệp trợ lý, không dựa vào vị trí cố định trong mảng `output`. Các lỗi xác thực, giới hạn lượt gọi, hết thời gian và lỗi mạng được chuyển thành thông báo tiếng Việt.
 
 ### Phân tích ảnh món ăn
 
@@ -122,7 +122,7 @@ Trong chỉ dẫn hiện tại, Mifflin–St Jeor được dùng để ước t�
 
 ## Quyền riêng tư
 
-Với giao diện React, lịch sử hội thoại lưu trong JSON có phiên bản ở localStorage; ảnh xem trước không được gửi tới backend. Ảnh món ăn chỉ được gửi khi người dùng chủ động phân tích. Backend không lưu phiên hội thoại. Nội dung và hồ sơ người dùng vẫn được gửi tới dịch vụ AI Thực Chiến để tạo phản hồi; `store: false` không khẳng định nhà cung cấp không ghi log vận hành. Trang HTML độc lập chỉ giữ lịch sử trong bộ nhớ của trang đang mở.
+Với giao diện React, lịch sử hội thoại lưu trong JSON có phiên bản ở localStorage; ảnh xem trước không được gửi tới backend. Ảnh món ăn chỉ được gửi khi người dùng chủ động phân tích. Backend không lưu phiên hội thoại. Nội dung và hồ sơ người dùng được gửi tới OpenAI để tạo phản hồi; `store: false` không khẳng định nhà cung cấp không ghi log vận hành. Trang HTML độc lập chỉ giữ lịch sử trong bộ nhớ của trang đang mở.
 
 ## Chạy kiểm tra backend
 
@@ -137,4 +137,4 @@ Bộ kiểm tra dùng HTTP giả lập, không gọi mô hình thật.
 
 `POST /api/onboarding` là luồng thu thập hồ sơ nhiều lượt, riêng với chat tư vấn. LLM sinh câu hỏi, textbox và lựa chọn nhanh theo những trường còn thiếu. Backend kiểm tra schema UI, số đo, lịch đủ bảy ngày và giữ các trường đã khai qua các lượt. Chỉ hồ sơ đầy đủ, hợp lệ của người trưởng thành mới có `ready: true`; frontend vẫn cần người dùng đồng ý kế hoạch trước khi chuyển vào ứng dụng.
 
-Endpoint dùng cùng kết nối Responses API/Gateway BTC với chat, không có fallback bằng câu hỏi giả khi dịch vụ lỗi. Chi tiết sử dụng và kiểm thử: [ONBOARDING_AI.md](../tro-ly-dinh-duong/docs/ONBOARDING_AI.md). Kiểm tra hợp đồng bằng `python -m unittest test_onboarding -v`.
+Endpoint dùng cùng kết nối OpenAI Responses API với chat, không có fallback bằng câu hỏi giả khi dịch vụ lỗi. Chi tiết sử dụng và kiểm thử: [ONBOARDING_AI.md](../tro-ly-dinh-duong/docs/ONBOARDING_AI.md). Kiểm tra hợp đồng bằng `python -m unittest test_onboarding -v`.

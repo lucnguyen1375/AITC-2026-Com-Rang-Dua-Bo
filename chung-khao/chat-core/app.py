@@ -12,18 +12,20 @@ from urllib.parse import urlsplit
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 import chatbot
 
-app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 from onboarding import router as onboarding_router
 from plan_actions import PlanContext, PlanUpdate, PLAN_INSTRUCTIONS, VISION_INSTRUCTIONS, extract_plan_updates
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.include_router(onboarding_router)
-HTML_FILE = Path(__file__).resolve().parent / "static" / "index.html"
+BACKEND_DIR = Path(__file__).resolve().parent
+HTML_FILE = BACKEND_DIR / "static" / "index.html"
+FRONTEND_DIR = Path(os.getenv("FRONTEND_DIST", str(BACKEND_DIR.parent / "tro-ly-dinh-duong" / "dist")))
 MAX_BODY_BYTES = 128 * 1024
 MAX_CHAT_BODY_BYTES = 2 * 1024 * 1024
 MAX_MEAL_PHOTO_BODY_BYTES = 1_100_000
@@ -173,7 +175,15 @@ async def http_error(request: Request, error: StarletteHTTPException):
 @app.get("/", response_class=FileResponse)
 @app.get("/index.html", response_class=FileResponse)
 async def index():
+    frontend_index = FRONTEND_DIR / "index.html"
+    if frontend_index.is_file():
+        return FileResponse(frontend_index, media_type="text/html")
     return FileResponse(HTML_FILE, media_type="text/html")
+
+
+@app.get("/healthz")
+async def health_check():
+    return {"status": "ok"}
 
 
 @app.post("/api/chat", response_model=ChatResponse, response_model_exclude_none=True)
@@ -247,14 +257,18 @@ async def analyze_meal(payload: MealPhotoRequest, request: Request):
     return MealPhotoResponse.model_validate(estimate)
 
 
+if FRONTEND_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+
+
 if __name__ == "__main__":
     import uvicorn
 
     try:
-        port = int(os.getenv("CHAT_PORT", "3000"))
+        port = int(os.getenv("PORT") or os.getenv("CHAT_PORT", "3000"))
         if not 1 <= port <= 65535:
             raise ValueError
     except ValueError:
-        raise SystemExit("CHAT_PORT phải là số nguyên từ 1 đến 65535.") from None
+        raise SystemExit("PORT/CHAT_PORT phải là số nguyên từ 1 đến 65535.") from None
     print(f"http://localhost:{port}", flush=True)
-    uvicorn.run(app, host=os.getenv("CHAT_HOST", "127.0.0.1"), port=port, log_level="warning", access_log=False)
+    uvicorn.run(app, host=os.getenv("CHAT_HOST", "0.0.0.0"), port=port, log_level="warning", access_log=False)

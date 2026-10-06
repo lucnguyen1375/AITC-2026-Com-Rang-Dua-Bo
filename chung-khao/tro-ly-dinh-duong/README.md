@@ -28,7 +28,11 @@ cd chung-khao/chat-core
 python -m pip install -r requirements.txt
 python app.py
 ```
-Đặt `THUCCHIEN_API_KEY` trong `.env` ở thư mục gốc repository. Vite chuyển tiếp `/api/*` tới backend cổng 3000. Ở môi trường triển khai, chuyển tiếp `/api/chat`, `/api/onboarding` và `/api/analyze-meal` tới FastAPI. Không đặt khóa API trong frontend.
+Đặt `OPENAI_API_KEY` trong `.env` ở thư mục gốc repository. Vite chuyển tiếp `/api/*` tới backend cổng 3000. Không đặt khóa API trong frontend.
+
+## Triển khai Render
+
+Repository có `render.yaml` và `Dockerfile` để build frontend, phục vụ frontend cùng FastAPI trên một web service. Tạo Blueprint từ repository ở Render rồi đặt `OPENAI_API_KEY` trong Environment của service (Render hỏi khóa khi tạo mới; nếu service đã có thì thêm biến ở Dashboard). Ứng dụng dùng biến `PORT` Render tự cấp và health check tại `/healthz`. Chi tiết cấu hình cục bộ xem `.env.example` ở thư mục gốc.
 
 ## Luồng demo
 1. Onboarding riêng: chọn **Bắt đầu với Vi**. LLM sinh câu hỏi, nhãn textbox, gợi ý nhập và lựa chọn nhanh theo thông tin còn thiếu. Chọn phương án hoặc tự trả lời; có thể nhắn tự do để sửa hồ sơ. Khi đủ thông tin, xem đề xuất rồi chọn **Đồng ý kế hoạch**.

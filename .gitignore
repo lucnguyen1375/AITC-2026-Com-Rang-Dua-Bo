@@ -5,6 +5,14 @@
 # Bí mật
 .env
 .env.local
+.env.*.local
+
+# Frontend builds and dependencies
+node_modules/
+chung-khao/tro-ly-dinh-duong/node_modules/
+chung-khao/tro-ly-dinh-duong/dist/
+chung-khao/tro-ly-dinh-duong/.vite/
+chung-khao/tro-ly-dinh-duong/test-results/
 
 # Python
 __pycache__/
