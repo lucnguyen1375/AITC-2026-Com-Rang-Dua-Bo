@@ -16,7 +16,6 @@ from app import app, MAX_CHAT_BODY_BYTES
 def fake_configuration(monkeypatch):
     monkeypatch.setattr(chatbot, "API_KEY", "fake-test-key")
     monkeypatch.setattr(chatbot, "BASE_URL", "https://gateway.example/v1")
-    monkeypatch.setattr(chatbot, "MODEL", "test-model")
 
 
 @pytest.fixture
@@ -63,7 +62,7 @@ def test_responses_contract_and_history(client, monkeypatch):
     payload = json.loads(request.content)
     assert str(request.url) == "https://gateway.example/v1/responses"
     assert request.headers["authorization"] == "Bearer fake-test-key"
-    assert payload["model"] == "test-model"
+    assert payload["model"] == "gpt-6-luna"
     assert payload["reasoning"] == {"effort": "none"}
     assert payload["store"] is False and payload["stream"] is False
     assert payload["input"] == [*messages[:-1], {"role": "user", "content": "Tăng cơ."}]
