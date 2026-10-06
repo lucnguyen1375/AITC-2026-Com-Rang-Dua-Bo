@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f1f3e6">
+  <meta name="description" content="Việt Nam Bốn Mùa Hoa Trái — khám phá trái cây Việt theo mùa, từ vườn đến bàn ăn.">
+  <title>Việt Nam Bốn Mùa Hoa Trái · Vị ngon từ đất lành</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14s15 8 15-10Z"/><path d="m4 21 12-12M9 16v-5m0 5h5"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="bag" viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="truck" viewBox="0 0 24 24"><path d="M2 5h12v12H2V5Zm12 5h4l4 4v3h-8"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="heart" viewBox="0 0 24 24"><path d="M12 20 3.8 12A5.2 5.2 0 0 1 12 5.8 5.2 5.2 0 0 1 20.2 12L12 20Z"/></symbol>
+    <symbol id="menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  </svg>
+  <a class="skip-link" href="#main">Chuyển đến nội dung chính</a>
+  <div class="announcement"><span>Trái ngon đúng mùa, hương vị trọn vẹn.</span><a href="#products">Khám phá mùa này <span aria-hidden="true">↗</span></a></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#" aria-label="Việt Nam Bốn Mùa Hoa Trái — trang chủ">
+        <span class="brand-mark"><svg class="icon"><use href="#leaf"/></svg></span>
+        <span class="brand-name"><span>VIỆT NAM</span><strong>Bốn Mùa Hoa Trái</strong></span>
+      </a>
+      <nav class="main-nav" id="main-nav" aria-label="Điều hướng chính">
+        <a class="nav-active" href="#main">Trang chủ</a><a href="#products">Trái cây theo mùa</a><a href="#story">Câu chuyện của chúng tôi</a><a href="#contact">Kết nối</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button" id="search-toggle" aria-label="Tìm kiếm trái cây" aria-expanded="false" aria-controls="search-panel"><svg class="icon"><use href="#search"/></svg></button>
+        <button class="icon-button cart-trigger" id="cart-toggle" aria-label="Mở giỏ hàng, 0 sản phẩm"><svg class="icon"><use href="#bag"/></svg><span id="cart-count">0</span></button>
+        <button class="icon-button mobile-toggle" id="menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="main-nav"><svg class="icon"><use href="#menu"/></svg></button>
+      </div>
+    </div>
+    <form class="search-panel container" id="search-panel" role="search" hidden>
+      <label for="search-input">Bạn đang tìm trái cây gì?</label>
+      <div class="search-field"><svg class="icon"><use href="#search"/></svg><input id="search-input" type="search" placeholder="Thử tìm xoài, cam, bơ…" maxlength="80" autocomplete="off"><button class="text-button" type="submit">Tìm kiếm <span aria-hidden="true">→</span></button></div>
+    </form>
+  </header>
+  <main id="main">
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="small-dot"></span> TỪ VƯỜN VIỆT, ĐẾN NHÀ BẠN</span>
+        <h1 id="hero-title">Bốn mùa hoa trái.<br><span>Trọn vị Việt Nam.</span></h1>
+        <p>Mỗi mùa một thức ngon. Khám phá những trái ngọt được nuôi dưỡng từ đất lành, nắng ấm và sự chăm chút của người làm vườn Việt.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#products">Khám phá trái ngon <svg class="icon"><use href="#arrow"/></svg></a><a class="story-link" href="#story">Câu chuyện từ vườn <span aria-hidden="true">↗</span></a></div>
+        <div class="hero-note"><svg class="icon"><use href="#leaf"/></svg><span>Thuận tự nhiên <span aria-hidden="true">·</span> Đậm vị quê nhà</span></div>
+        <span class="hero-number" aria-hidden="true">01 / 04 <span>— MÙA TRÁI NGỌT</span></span>
+      </div>
+      <div class="hero-visual">
+        <img src="assets/hero.jpg" alt="Những quả cam chín vàng tươi dưới nắng" width="1400" height="1867" fetchpriority="high">
+        <div class="harvest-stamp"><svg class="icon"><use href="#sun"/></svg><span>NẮNG LÀNH<br><strong>TRÁI NGỌT</strong></span></div>
+        <div class="harvest-caption"><div><span>MỘT CHÚT NẮNG, MỘT CHÚT NGỌT</span><strong>Hương vị của mùa.</strong></div><a class="round-link" href="#products" aria-label="Khám phá sản phẩm theo mùa"><svg class="icon"><use href="#arrow"/></svg></a></div>
+      </div>
+    </section>
+    <section class="benefits container" aria-label="Giá trị của chúng tôi">
+      <div><svg class="icon"><use href="#leaf"/></svg><span><strong>Chọn ngon từ vườn</strong><small>Chăm chút từng trái, trọn từng vị</small></span></div>
+      <div><svg class="icon"><use href="#sun"/></svg><span><strong>Tươi ngon đúng mùa</strong><small>Thuận mùa tự nhiên, đậm vị nguyên bản</small></span></div>
+      <div><svg class="icon"><use href="#truck"/></svg><span><strong>Trao gửi tận tay</strong><small>Đóng gói cẩn thận, nâng niu trái ngon</small></span></div>
+    </section>
+    <section class="products-section section container" id="products" aria-labelledby="products-title">
+      <div class="section-heading"><div><span class="eyebrow">THỨC NGON TỪ ĐẤT VIỆT</span><h2 id="products-title">Mùa này, ăn gì ngon?</h2></div><p>Một chút tươi mát cho ngày thường.<br>Một chút ngọt lành cho người thương.</p></div>
+      <div class="product-toolbar"><div class="filters" role="group" aria-label="Lọc sản phẩm"><button class="filter active" data-filter="all" aria-pressed="true">Tất cả trái ngon</button><button class="filter" data-filter="seasonal" aria-pressed="false">Đang vào mùa</button><button class="filter" data-filter="favorite" aria-pressed="false">Được yêu thích</button></div><span class="product-count" id="product-count" aria-live="polite">4 trái ngon dành cho bạn</span></div>
+      <div class="product-grid" id="product-grid"></div>
+      <div class="empty-state" id="empty-state" hidden><svg class="icon"><use href="#search"/></svg><h3>Chưa tìm thấy trái ngon bạn cần</h3><p>Thử một tên khác hoặc xem tất cả sản phẩm nhé.</p><button class="button button-primary" id="reset-search">Xem tất cả trái ngon</button></div>
+      <p class="catalog-note">Giá và sản phẩm minh họa cho giao diện demo.</p>
+    </section>
+    <section class="story-section container" id="story" aria-labelledby="story-title">
+      <div class="story-visual"><img src="assets/mango.jpg" alt="Xoài tươi với sắc vàng tự nhiên" width="700" height="700" loading="lazy"><span class="story-photo-label">ĐẤT LÀNH NUÔI TRÁI NGỌT</span></div>
+      <div class="story-copy"><span class="eyebrow">CÂU CHUYỆN CỦA CHÚNG TÔI</span><h2 id="story-title">Từ một khu vườn,<br>đến những yêu thương.</h2><p>Việt Nam có những mùa trái cây thật đẹp. Có vị ngọt của miền Tây, nét thanh mát của cao nguyên và hương thơm rất riêng của từng miền đất.</p><p>Bốn Mùa Hoa Trái mong mang những hương vị ấy đến gần hơn với bữa ăn mỗi ngày. Để mỗi trái ngon là một kết nối với thiên nhiên, với người trồng và với quê nhà.</p><a class="story-link" href="#contact">Cùng chúng tôi kết nối <svg class="icon"><use href="#arrow"/></svg></a><div class="story-signature"><svg class="icon"><use href="#heart"/></svg><span>Gói vị ngon. Gửi lòng thành.</span></div></div>
+    </section>
+    <section class="newsletter container section" id="contact" aria-labelledby="newsletter-title">
+      <div><span class="eyebrow">HẸN BẠN MÙA TRÁI TIẾP THEO</span><h2 id="newsletter-title">Một mùa ngon,<br>một tin vui.</h2><p>Để lại email để nhận gợi ý trái cây theo mùa<br>và những câu chuyện nhỏ từ vườn.</p></div>
+      <form id="newsletter-form" class="newsletter-form" novalidate><label for="email">Email của bạn</label><div class="email-field"><input id="email" name="email" type="email" placeholder="ban@email.com" autocomplete="email" required maxlength="254" aria-describedby="email-message newsletter-note"><button class="button button-primary" type="submit">Đăng ký <svg class="icon"><use href="#arrow"/></svg></button></div><p class="form-message" id="email-message" aria-live="polite"></p><p class="newsletter-note" id="newsletter-note">Bản demo: biểu mẫu chỉ mô phỏng đăng ký, email không được gửi đi.</p></form>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="container footer-top"><a class="brand" href="#"><span class="brand-mark"><svg class="icon"><use href="#leaf"/></svg></span><span class="brand-name"><span>VIỆT NAM</span><strong>Bốn Mùa Hoa Trái</strong></span></a><p>Trái ngon bốn mùa.<br>Yêu thương mỗi ngày.</p><nav aria-label="Điều hướng chân trang"><a href="#products">Khám phá trái ngon</a><a href="#story">Câu chuyện của chúng tôi</a><a href="#contact">Kết nối cùng chúng tôi</a></nav><a class="back-top" href="#main">Về đầu trang <span aria-hidden="true">↑</span></a></div><div class="container footer-bottom"><span>© 2026 Việt Nam Bốn Mùa Hoa Trái.</span><span>Được vun trồng bằng yêu thương <svg class="icon"><use href="#heart"/></svg></span></div></footer>
+  <dialog class="cart-dialog" id="cart-dialog" aria-labelledby="cart-title"><div class="cart-header"><div><span class="eyebrow">TRÁI NGON BẠN CHỌN</span><h2 id="cart-title">Giỏ hàng của bạn</h2></div><button class="icon-button" id="cart-close" aria-label="Đóng giỏ hàng"><svg class="icon"><use href="#close"/></svg></button></div><div id="cart-items"></div><div class="cart-summary"><span>Tạm tính</span><strong id="cart-total">0 ₫</strong></div><p class="cart-demo-note">Giỏ hàng demo lưu trong trình duyệt. Chưa hỗ trợ đặt hàng hoặc thanh toán.</p><button class="button button-primary" id="continue-shopping">Tiếp tục chọn trái ngon <svg class="icon"><use href="#arrow"/></svg></button></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
