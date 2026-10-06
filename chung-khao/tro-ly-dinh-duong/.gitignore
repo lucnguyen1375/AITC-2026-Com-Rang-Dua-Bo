@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tsbuildinfo
+test-results/
+playwright-report/
+ui-test-results/
+ui-verify-results/
+ui-final-results/
+pc-test-results/
+pc-confirm-results/

@@ -25,6 +25,12 @@
       {
         "command": "bash scripts/_pyrun.sh scripts/log_hook.py --tool=cursor"
       }
+    ],
+    "preToolUse": [
+      {
+        "command": "[ ! -f \"C:\\\\Users\\\\DELL\\\\.cursor\\\\skills\\\\impeccable\\\\scripts\\\\impeccable\" ] || \"C:\\\\Users\\\\DELL\\\\.cursor\\\\skills\\\\impeccable\\\\scripts\\\\impeccable\" hook-before-edit",
+        "timeout": 5
+      }
     ]
   }
 }

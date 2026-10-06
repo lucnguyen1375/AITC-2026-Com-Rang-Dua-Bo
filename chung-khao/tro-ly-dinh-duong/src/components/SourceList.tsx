@@ -1,0 +1,2 @@
+import type { NutritionSource } from '../types';
+export function SourceList({ sources }: { sources: NutritionSource[] }) { return <ul className="sources">{sources.map(source => <li key={source.id}><strong>{source.url ? <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a> : source.title}</strong><span className={`source-state ${source.status}`}>{source.status === 'verified' ? 'Nguồn công thức' : 'Chưa kiểm chứng'}</span><p>{source.locator}</p></li>)}</ul>; }

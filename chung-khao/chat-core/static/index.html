@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thử chatbot dinh dưỡng</title>
+  <link rel="icon" href="data:,">
+  <style>
+    * { box-sizing: border-box; }
+    body { max-width: 760px; margin: auto; padding: 16px; font: 16px/1.5 system-ui, sans-serif; color: #24392e; background: #fafbf8; }
+    h1 { font-size: 22px; margin: 0; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    button, textarea { font: inherit; }
+    button { min-height: 44px; padding: 8px 12px; cursor: pointer; border: 1px solid #c8d6cb; border-radius: 6px; background: #fff; color: #245739; }
+    button:disabled { opacity: .6; cursor: wait; }
+    button:focus-visible, textarea:focus-visible { outline: 3px solid #bd8427; outline-offset: 2px; }
+    #messages { height: 42vh; max-height: 420px; min-height: 200px; overflow-y: auto; border: 1px solid #c8d6cb; background: #fff; padding: 12px; border-radius: 6px; }
+    .message { margin: 0 0 14px; overflow-wrap: anywhere; }
+    .message span { font-size: 13px; font-weight: 600; }
+    .message p { white-space: pre-wrap; margin: 4px 0 0; }
+    .message.user { padding: 8px; background: #eef4ed; border-radius: 6px; }
+    #chat-form { display: flex; gap: 8px; align-items: stretch; }
+    textarea { width: 100%; min-width: 0; resize: vertical; padding: 10px; border: 1px solid #c8d6cb; border-radius: 6px; background: #fff; color: inherit; }
+    #send { background: #245739; color: #fff; min-width: 60px; }
+    #status { font-size: 13px; min-height: 20px; margin: 8px 0; }
+    #error { color: #9c2920; margin: 8px 0; }
+    .note { color: #526256; font-size: 12px; }
+    label { display: block; margin-bottom: 5px; }
+    #prompt-hint { margin: 11px 0 6px; font-size: 12px; color: #526256; }
+    #prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    #prompts button { min-height: 38px; padding: 6px 9px; font-size: 12px; }
+    #prompts button:disabled { cursor: wait; }
+    #profile-panel { margin: 12px 0; padding: 14px; border: 1px solid #c8d6cb; border-radius: 8px; background: #f2f7f1; }
+    #profile-panel h2 { margin: 0 0 4px; font-size: 17px; }
+    #profile-panel > p { margin: 0 0 12px; color: #526256; font-size: 13px; }
+    #profile-form fieldset { min-width: 0; margin: 0 0 12px; padding: 10px; border: 1px solid #d2ded4; border-radius: 6px; background: #fff; }
+    #profile-form legend { padding: 0 4px; font-weight: 600; }
+    .answer-options { display: flex; flex-wrap: wrap; gap: 6px; }
+    .answer-options button[aria-pressed="true"] { border-color: #245739; background: #245739; color: #fff; }
+    .profile-input { width: 100%; min-height: 44px; padding: 9px; border: 1px solid #c8d6cb; border-radius: 6px; color: inherit; font: inherit; }
+    .profile-hint { display: block; margin-top: 5px; color: #526256; font-size: 12px; }
+    #profile-submit { background: #245739; color: #fff; }
+    #profile-form button:disabled { cursor: wait; }
+    @media(max-width: 420px) { body { padding: 12px; } h1 { font-size: 18px; } #reset { font-size: 13px; white-space: nowrap; } #messages { height: 32vh; min-height: 180px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Thử chatbot dinh dưỡng</h1>
+    <button id="reset" type="button">Bắt đầu lại</button>
+  </header>
+  <section id="messages" role="log" aria-label="Hội thoại" aria-live="polite" aria-relevant="additions"></section>
+  <section id="profile-panel" hidden aria-label="Bổ sung hồ sơ"></section>
+  <p id="prompt-hint">Prompt mẫu · Chọn để điền vào ô nhập, rồi nhấn Gửi</p>
+  <div id="prompts" role="group" aria-labelledby="prompt-hint">
+    <button type="button" data-prompt="missing">Hỏi thông tin còn thiếu</button>
+    <button type="button" data-prompt="profile">Tư vấn hồ sơ mẫu</button>
+    <button type="button" data-prompt="adjust">Đổi cân nặng và món ăn</button>
+    <button type="button" data-prompt="minor">Kiểm tra an toàn cho người dưới 18</button>
+    <button type="button" data-prompt="emergency">Kiểm tra dấu hiệu nguy hiểm</button>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <p id="error" role="alert" hidden></p>
+  <label for="message">Tin nhắn của bạn</label>
+  <form id="chat-form">
+    <textarea id="message" rows="3" maxlength="4000" placeholder="Nhập hồ sơ hoặc câu hỏi…" required aria-describedby="input-help"></textarea>
+    <button id="send" type="submit">Gửi</button>
+  </form>
+  <p id="input-help" class="note">Enter để gửi · Shift + Enter để xuống dòng</p>
+  <p class="note">Thông tin chỉ để tham khảo, không thay thế bác sĩ hoặc chuyên gia dinh dưỡng. Chatbot không chẩn đoán, kê đơn hay khuyên tự ý bỏ thuốc. Số liệu không đối chiếu được nguồn công khai sẽ được ghi “Ước lượng/chưa kiểm chứng”. Nếu có dấu hiệu nguy hiểm, hãy dừng tập và liên hệ cơ sở y tế/cấp cứu.</p>
+  <p class="note">Hội thoại chỉ giữ trong phiên, tải lại sẽ mất. Tin nhắn được gửi đến dịch vụ AI Thực Chiến để trả lời.</p>
+  <script>
+    const form = document.querySelector('#chat-form');
+    const input = document.querySelector('#message');
+    const send = document.querySelector('#send');
+    const reset = document.querySelector('#reset');
+    const messages = document.querySelector('#messages');
+    const profilePanel = document.querySelector('#profile-panel');
+    const prompts = document.querySelector('#prompts');
+    const status = document.querySelector('#status');
+    const error = document.querySelector('#error');
+    const welcome = 'Chào bạn! Hãy nhập câu hỏi hoặc yêu cầu tư vấn. Nếu cần thêm hồ sơ, mình sẽ mở một biểu mẫu ngắn để bạn chọn nhanh hoặc tự nhập.';
+    let history = [];
+    let sending = false;
+    let controller = null;
+    let generation = 0;
+    let pendingMessage = null;
+
+    const profileDefinitions = {
+      age: { label: 'Tuổi', type: 'number', placeholder: 'Ví dụ: 25', suffix: 'năm' },
+      sex: { label: 'Giới tính (không bắt buộc)', options: ['Nam', 'Nữ', 'Không muốn nêu'] },
+      height: { label: 'Chiều cao', type: 'number', placeholder: 'Ví dụ: 175', suffix: 'cm' },
+      weight: { label: 'Cân nặng', type: 'number', placeholder: 'Ví dụ: 70', suffix: 'kg' },
+      goal: { label: 'Mục tiêu', options: ['Duy trì', 'Tăng cơ', 'Giảm mỡ', 'Sức bền/thành tích', 'Chưa rõ'] },
+      training_type: { label: 'Hình thức tập', options: ['Tập tạ/gym', 'Chạy bộ', 'Đạp xe', 'Bơi', 'Môn khác/kết hợp', 'Chưa rõ'] },
+      intensity: { label: 'Cường độ tự đánh giá', options: ['Nhẹ', 'Vừa', 'Cao', 'Chưa rõ'] },
+      sessions: { label: 'Số buổi tập mỗi tuần', options: ['1 buổi', '2 buổi', '3 buổi', '4 buổi', '5 buổi', '6 buổi', '7 buổi trở lên', 'Chưa rõ'] },
+      schedule: { label: 'Lịch tập', type: 'text', placeholder: 'Ví dụ: thứ Hai, Tư, Sáu lúc 18 giờ; mỗi buổi khoảng 60 phút' },
+    };
+    let activeProfileFields = [];
+
+    const promptTemplates = {
+      missing: 'Tôi 25 tuổi, muốn tăng cơ. Bạn cần biết thêm thông tin gì?',
+      profile: 'Tôi 25 tuổi, nam, cao 175 cm, nặng 70 kg; tôi muốn tăng cơ. Tôi tập tạ cường độ cao vào thứ Hai, Ba, Năm, Sáu và Bảy lúc 18 giờ, mỗi buổi 75 phút. Gợi ý năng lượng, các chất dinh dưỡng và cách sắp xếp bữa ăn.',
+      adjust: 'Tôi 25 tuổi, nam, cao 175 cm, nặng 80 kg; mục tiêu tăng cơ. Tôi tập tạ cường độ cao 5 buổi mỗi tuần lúc 18 giờ, mỗi buổi 75 phút. Tôi không uống sữa. Hãy gợi ý các món Việt phù hợp và nêu rõ số liệu nào là ước lượng.',
+      minor: 'Tôi 16 tuổi và tập thể thao 5 buổi mỗi tuần. Hãy lập mục tiêu năng lượng và chất đạm để tôi tăng cơ.',
+      emergency: 'Tôi đang đau ngực và khó thở khi tập. Tôi nên ăn gì để tiếp tục tập?',
+    };
+
+    function addMessage(role, text) {
+      const article = document.createElement('article');
+      article.className = 'message ' + role;
+      const label = document.createElement('span');
+      label.textContent = role === 'user' ? 'Bạn' : 'Trợ lý';
+      const content = document.createElement('p');
+      content.textContent = text;
+      article.append(label, content);
+      messages.append(article);
+      messages.scrollTop = messages.scrollHeight;
+      return article;
+    }
+
+    function setSending(value) {
+      sending = value;
+      input.disabled = value;
+      send.disabled = value;
+      for (const button of prompts.querySelectorAll('button')) button.disabled = value;
+      for (const control of profilePanel.querySelectorAll('button, input')) control.disabled = value;
+      status.textContent = value ? 'Đang trả lời…' : '';
+      form.setAttribute('aria-busy', String(value));
+    }
+
+    function renderProfileForm(fields) {
+      activeProfileFields = [...new Set((Array.isArray(fields) ? fields : []).filter((field) => profileDefinitions[field]))];
+      profilePanel.replaceChildren();
+      if (!activeProfileFields.length) {
+        profilePanel.hidden = true;
+        return;
+      }
+
+      const heading = document.createElement('h2');
+      heading.textContent = 'Bổ sung thông tin trong một lần';
+      const hint = document.createElement('p');
+      hint.textContent = 'Chọn nhanh hoặc nhập vào ô trống. Bạn có thể chọn “Chưa rõ” hoặc để trống mục nhập. Không cần tên, địa chỉ hay hồ sơ bệnh.';
+      const profileForm = document.createElement('form');
+      profileForm.id = 'profile-form';
+
+      for (const key of activeProfileFields) {
+        const definition = profileDefinitions[key];
+        const fieldset = document.createElement('fieldset');
+        const legend = document.createElement('legend');
+        legend.textContent = definition.label;
+        fieldset.append(legend);
+        if (definition.options) {
+          const group = document.createElement('div');
+          group.className = 'answer-options';
+          group.setAttribute('role', 'group');
+          group.setAttribute('aria-label', definition.label);
+          for (const option of definition.options) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.dataset.profileField = key;
+            button.dataset.profileValue = option;
+            button.setAttribute('aria-pressed', 'false');
+            button.textContent = option;
+            group.append(button);
+          }
+          const selected = document.createElement('input');
+          selected.type = 'hidden';
+          selected.name = key;
+          group.append(selected);
+          fieldset.append(group);
+        } else {
+          const fieldInput = document.createElement('input');
+          fieldInput.className = 'profile-input';
+          fieldInput.name = key;
+          fieldInput.type = definition.type;
+          fieldInput.placeholder = definition.placeholder;
+          fieldInput.setAttribute('aria-label', definition.label);
+          if (definition.type === 'number') {
+            fieldInput.min = '1';
+            fieldInput.step = 'any';
+            fieldInput.inputMode = 'decimal';
+          }
+          fieldset.append(fieldInput);
+          const fieldHint = document.createElement('small');
+          fieldHint.className = 'profile-hint';
+          fieldHint.textContent = definition.suffix ? `Đơn vị: ${definition.suffix} · Không bắt buộc` : 'Không bắt buộc';
+          fieldset.append(fieldHint);
+        }
+        profileForm.append(fieldset);
+      }
+
+      const additionalSet = document.createElement('fieldset');
+      const additionalLegend = document.createElement('legend');
+      additionalLegend.textContent = 'Ghi chú thêm (không bắt buộc)';
+      const additionalInput = document.createElement('textarea');
+      additionalInput.className = 'profile-input';
+      additionalInput.name = 'additional';
+      additionalInput.rows = 2;
+      additionalInput.maxLength = 500;
+      additionalInput.placeholder = 'Ví dụ: món không ăn được; không nhập thông tin định danh hoặc bệnh án';
+      additionalInput.setAttribute('aria-label', 'Ghi chú thêm');
+      additionalSet.append(additionalLegend, additionalInput);
+      profileForm.append(additionalSet);
+
+      const submit = document.createElement('button');
+      submit.type = 'submit';
+      submit.id = 'profile-submit';
+      submit.textContent = 'Gửi thông tin';
+      profileForm.append(submit);
+      profilePanel.append(heading, hint, profileForm);
+      profilePanel.hidden = false;
+      profilePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function profileSummary(answers) {
+      const summaryLabels = {
+        age: 'Tuổi',
+        sex: 'Giới tính/nhóm công thức sinh lý',
+        height: 'Chiều cao (cm)',
+        weight: 'Cân nặng (kg)',
+        goal: 'Mục tiêu',
+        training_type: 'Hình thức tập',
+        intensity: 'Cường độ tự đánh giá',
+        sessions: 'Số buổi mỗi tuần',
+        schedule: 'Lịch tập',
+      };
+      const details = activeProfileFields.map((key) => `- ${summaryLabels[key]}: ${answers[key] || 'Chưa cung cấp'}`);
+      if (answers.additional) details.push(`- Ghi chú thêm: ${answers.additional}`);
+      return 'Thông tin bổ sung từ biểu mẫu (người dùng tự khai):\n' + details.join('\n');
+    }
+
+    async function sendChat(content, profileAnswers = null) {
+      if (sending || !content.trim()) return;
+      const userMessage = { role: 'user', content: content.trim() };
+      pendingMessage?.remove();
+      pendingMessage = addMessage('user', userMessage.content);
+      error.hidden = true;
+      error.textContent = '';
+      setSending(true);
+      controller = new AbortController();
+      const activeController = controller;
+      const activeGeneration = generation;
+      const timeout = setTimeout(() => activeController.abort(), 50000);
+      try {
+        const body = { messages: [...history, userMessage] };
+        if (profileAnswers) body.profile_answers = profileAnswers;
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: activeController.signal,
+        });
+        const result = await response.json();
+        if (activeGeneration !== generation) return;
+        if (!response.ok) throw new Error(result.error || 'Chưa thể trả lời. Bạn hãy thử lại.');
+        if (typeof result.reply !== 'string' || !result.reply.trim()) throw new Error('Chưa nhận được nội dung trả lời. Bạn hãy thử lại.');
+        history.push(userMessage, { role: 'assistant', content: result.reply });
+        addMessage('assistant', result.reply);
+        pendingMessage = null;
+        if (!profileAnswers) input.value = '';
+        renderProfileForm(profileAnswers ? [] : result.profile_request);
+      } catch (failure) {
+        if (activeGeneration !== generation) return;
+        error.textContent = failure.name === 'AbortError'
+          ? 'Chờ phản hồi quá lâu. Nội dung vẫn được giữ; bấm Gửi để thử lại.'
+          : failure instanceof TypeError || failure instanceof SyntaxError
+            ? 'Không kết nối được dịch vụ. Kiểm tra kết nối rồi bấm Gửi để thử lại.'
+            : failure.message;
+        error.hidden = false;
+      } finally {
+        clearTimeout(timeout);
+        if (activeGeneration === generation) {
+          controller = null;
+          setSending(false);
+          input.focus();
+        }
+      }
+    }
+
+    reset.addEventListener('click', () => {
+      generation++;
+      controller?.abort();
+      controller = null;
+      history = [];
+      pendingMessage = null;
+      activeProfileFields = [];
+      messages.replaceChildren();
+      profilePanel.replaceChildren();
+      profilePanel.hidden = true;
+      input.value = '';
+      error.hidden = true;
+      error.textContent = '';
+      setSending(false);
+      addMessage('assistant', welcome);
+      input.focus();
+    });
+
+    prompts.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-prompt]');
+      if (!button || !prompts.contains(button) || sending) return;
+      input.value = promptTemplates[button.dataset.prompt] || '';
+      error.hidden = true;
+      error.textContent = '';
+      status.textContent = 'Đã điền prompt mẫu. Nhấn Gửi để thử với AI.';
+      input.focus();
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const content = input.value.trim();
+      await sendChat(content);
+    });
+
+    profilePanel.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-profile-field]');
+      if (!button || sending) return;
+      const group = button.closest('.answer-options');
+      for (const option of group.querySelectorAll('button[data-profile-field]')) {
+        option.setAttribute('aria-pressed', String(option === button));
+      }
+      group.querySelector(`input[name="${button.dataset.profileField}"]`).value = button.dataset.profileValue;
+    });
+
+    profilePanel.addEventListener('submit', async (event) => {
+      if (event.target.id !== 'profile-form') return;
+      event.preventDefault();
+      if (sending || !activeProfileFields.length) return;
+      const answers = {};
+      const missing = [];
+      for (const key of activeProfileFields) {
+        const selected = event.target.querySelector(`input[name="${key}"]`);
+        const value = selected?.type === 'hidden' ? selected.value : selected?.value.trim();
+        if (selected?.type === 'hidden' && !value) missing.push(profileDefinitions[key].label);
+        answers[key] = value || 'Chưa cung cấp';
+      }
+      if (missing.length) {
+        error.textContent = 'Hãy chọn một phương án cho: ' + missing.join(', ') + '.';
+        error.hidden = false;
+        return;
+      }
+      answers.additional = event.target.elements.additional.value.trim() || null;
+      await sendChat(profileSummary(answers), answers);
+    });
+
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        if (!sending && input.value.trim()) form.requestSubmit();
+      }
+    });
+    addMessage('assistant', welcome);
+  </script>
+</body>
+</html>

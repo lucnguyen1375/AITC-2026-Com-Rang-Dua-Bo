@@ -1,0 +1,38 @@
+.food-photo{aspect-ratio:4/3;overflow:hidden;border-radius:10px;background:var(--ground)}
+.food-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.food-photo-fallback{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:12px;text-align:center}
+.food-nutrition{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:8px 0 0;font-variant-numeric:tabular-nums}
+.food-nutrition dt{font-size:11px;color:var(--muted)}
+.food-nutrition dd{margin:0;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.food-nutrition dd span{font-size:11px;font-weight:400}
+.workspace-main .suggested-meal{display:block;padding:22px 0;border-bottom:1px solid var(--line)}
+.suggested-meal-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
+.suggested-meals{container-type:inline-size}
+.suggested-foods{display:grid;grid-template-columns:1fr;gap:24px 18px}
+@container(min-width:480px){.suggested-foods{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.suggested-food{display:flex;flex-direction:column;gap:12px;min-width:0}
+.suggested-food>.food-photo,.suggested-food>div{width:100%}
+.suggested-food>.food-photo{aspect-ratio:4/3}
+.suggested-food .food-photo img{object-fit:contain}
+.suggested-food h4{margin:0;font-size:16px;line-height:1.5}
+.suggested-food .food-nutrition dd{font-size:14px}
+.suggested-food h4 span{font-weight:400;color:var(--muted);white-space:nowrap}
+.workspace-main .suggested-food p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+.suggested-total{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
+.suggested-total>span{font-size:12px;color:var(--muted)}
+.workspace-main .suggested-alignment{margin:14px 0;font-size:13px}
+.suggested-alignment.aligned{color:var(--green)}
+.ingredient-preview{grid-column:1 / -1;margin-bottom:8px}
+.ingredient-preview .food-photo{width:100%;aspect-ratio:16/10}
+.ingredient-preview .food-photo img{object-fit:contain}
+.ingredient-nutrition{grid-column:1 / -1;padding-bottom:10px}
+.ingredient-row{align-items:start}
+.meal-alignment{padding:16px;margin:18px 0;background:var(--ground);border-radius:12px}
+.meal-alignment.aligned{background:var(--green-light);color:var(--green)}
+.meal-alignment h3{margin:5px 0 8px;font-size:16px}
+.meal-alignment p{font-size:13px;line-height:1.8}
+.meal-alignment small{display:block;margin-top:10px}
+.plan-origin{padding:12px 0;font-size:13px;color:var(--blue)}
+.food-credits{font-size:12px}
+.food-credits p{margin:8px 0}
+@media(max-width:600px){.suggested-foods{grid-template-columns:1fr;gap:26px}.suggested-food>.food-photo{aspect-ratio:16/10}.food-nutrition{gap:5px}.food-nutrition dt{font-size:11px}.food-nutrition dd{font-size:14px}.food-nutrition dd span{display:inline}}
