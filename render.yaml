@@ -3,11 +3,13 @@ services:
     name: bua-viet
     runtime: docker
     plan: free
-    healthCheckPath: /healthz
+    healthCheckPath: /
     envVars:
       - key: OPENAI_API_KEY
         sync: false
       - key: OPENAI_MODEL
-        value: gpt-4.1-mini
+        value: gpt-6-luna
+      - key: OPENAI_REASONING_EFFORT
+        value: none
       - key: OPENAI_BASE_URL
         value: https://api.openai.com/v1

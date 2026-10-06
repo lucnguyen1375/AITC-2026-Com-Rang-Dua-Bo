@@ -8,4 +8,5 @@ node_modules
 **/.pytest_cache
 **/test-results
 .pnpm-store
+.tmp
 .ai-log
