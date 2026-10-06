@@ -13,6 +13,7 @@ test('Chọn đáp án tiếp tục khi câu hỏi AI thiếu các thuộc tính
  await page.getByRole('spinbutton',{name:'Tuổi',exact:true}).fill('25');
  await page.getByRole('button',{name:'Gửi câu trả lời',exact:true}).click();
  await page.getByRole('button',{name:'Tăng cơ',exact:true}).click();
+ await page.getByRole('button',{name:'Gửi câu trả lời',exact:true}).click();
  await expect(page.getByRole('textbox',{name:'Loại hình tập của bạn?',exact:true})).toBeVisible();
  await expect(page.getByRole('alert')).toHaveCount(0);
  expect(bodies[1].answers).toEqual({goal:'gainMuscle'});
@@ -29,6 +30,7 @@ test('Chọn đáp án lỗi mạng vẫn giữ lựa chọn để thử lại',
  await page.goto('/');await page.getByRole('spinbutton',{name:'Tuổi',exact:true}).fill('25');
  await page.getByRole('button',{name:'Gửi câu trả lời',exact:true}).click();
  await page.getByRole('button',{name:'Tăng cơ cùng Vi',exact:true}).click();
+ await page.getByRole('button',{name:'Gửi câu trả lời',exact:true}).click();
  await expect(page.getByRole('alert')).toContainText('Chờ phản hồi quá lâu');
  await expect(page.getByRole('textbox',{name:question.label})).toHaveValue('Tăng cơ');
  await page.getByRole('button',{name:'Thử lại',exact:true}).click();

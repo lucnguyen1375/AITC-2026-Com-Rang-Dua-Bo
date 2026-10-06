@@ -15,7 +15,7 @@ export type ChatReply = { reply: string; profile_request?: ChatProfileField[]; p
 
 const profileFieldSet = new Set<ChatProfileField>(['age', 'sex', 'height', 'weight', 'goal', 'training_type', 'intensity', 'sessions', 'schedule']);
 
-/** Keep the app's versioned local JSON shape and adapt it to chat-core's role/content contract. */
+/** Adapt local conversation JSON to the integrated AI endpoint. */
 export async function requestNutritionChat(messages: ChatMessage[], profile?: UserProfile, profileAnswers?: ChatProfileAnswers, planContext?: ChatPlanContext, signal?: AbortSignal): Promise<ChatReply> {
  const context = profile ? [{ role: 'assistant' as const, content: `Hồ sơ dinh dưỡng do người dùng khai báo trong ứng dụng (JSON): ${JSON.stringify(profile)}` }] : [];
  const recent = messages
@@ -48,7 +48,7 @@ export async function requestNutritionChat(messages: ChatMessage[], profile?: Us
    signal,
   });
  } catch {
-  throw new Error('Không kết nối được máy chủ chat. Hãy kiểm tra backend rồi thử lại.');
+  throw new Error('Không kết nối được Vi. Hãy kiểm tra kết nối ứng dụng rồi thử lại.');
  }
  let result: unknown;
  try { result = await response.json(); }

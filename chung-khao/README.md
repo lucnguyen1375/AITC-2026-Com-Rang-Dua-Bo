@@ -11,5 +11,15 @@ Thư mục nộp bài / làm việc cho đội **Cơm Rang Dưa Bò** (`AITC-541
 ```
 chung-khao/
 ├── README.md          ← file này
-└── (code của đội)
+└── tro-ly-dinh-duong/ ← ứng dụng Bữa Việt, một service Node.js
 ```
+
+## Chạy Bữa Việt
+
+```powershell
+cd chung-khao/tro-ly-dinh-duong
+pnpm install
+pnpm dev
+```
+
+Giao diện và các endpoint AI chạy chung tại `http://127.0.0.1:5173`. Bản build: `pnpm build` rồi `pnpm start`. Backend Python `chat-core` đã được bỏ; frontend gọi `/api/*` trên chính service này. Cấu hình AI và hướng dẫn chi tiết ở [README ứng dụng](tro-ly-dinh-duong/README.md).

@@ -21,39 +21,45 @@ pnpm dev
 ```
 Mở địa chỉ Vite in ra. Kiểm tra: `pnpm build`. Xem bản build: `pnpm preview`.
 
-## Chat AI
-Chạy backend chat-core ở một terminal riêng trước khi mở chat:
+## AI trong cùng ứng dụng
+
+Chỉ triển khai service **`tro-ly-dinh-duong`**, chạy **một tiến trình Node.js, một port 5173**. Backend Python `chat-core` đã được bỏ khỏi repository. Frontend gọi các đường dẫn cùng nguồn `/api/chat`, `/api/onboarding`, `/api/analyze-meal`; `server/ai.mjs` xử lý ngay trong tiến trình Vite và gọi LLM. Không có service AI riêng hoặc proxy sang port khác.
+
+Giữ cấu hình trong `.env` ở gốc repository hoặc sao chép `.env.example` trong thư mục ứng dụng thành `.env.local`. Hỗ trợ `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_MODEL`, `OPENAI_REASONING_EFFORT` và các biến `THUCCHIEN_*` hiện có. `.env.local` của ứng dụng ưu tiên hơn tệp gốc; biến môi trường tiến trình ưu tiên cao nhất. Khởi động lại ứng dụng sau khi đổi cấu hình. Không dùng tiền tố `VITE_` cho API key: khóa chỉ được đọc bởi tiến trình Node, không đưa vào bundle trình duyệt.
+
 ```powershell
-cd chung-khao/chat-core
-python -m pip install -r requirements.txt
-python app.py
+# Phát triển: frontend và AI cùng http://127.0.0.1:5173
+pnpm dev
+
+# Chạy bản build tại cùng port (dừng dev trước)
+pnpm build
+pnpm start
 ```
-Đặt `OPENAI_API_KEY` trong `.env` ở thư mục gốc repository. Vite chuyển tiếp `/api/*` tới backend cổng 3000. Không đặt khóa API trong frontend.
 
-## Triển khai Render
-
-Repository có `render.yaml` và `Dockerfile` để build frontend, phục vụ frontend cùng FastAPI trên một web service. Tạo Blueprint từ repository ở Render rồi đặt `OPENAI_API_KEY` trong Environment của service (Render hỏi khóa khi tạo mới; nếu service đã có thì thêm biến ở Dashboard). Ứng dụng dùng biến `PORT` Render tự cấp và health check tại `/healthz`. Chi tiết cấu hình cục bộ xem `.env.example` ở thư mục gốc.
+`pnpm start` dùng Vite preview phục vụ bản build và cùng bộ xử lý AI, phù hợp chạy demo trên máy. Không phục vụ riêng thư mục `dist` bằng static hosting nếu cần AI. Có thể đổi port bằng `pnpm dev --port 8080` hoặc `pnpm start --port 8080`; `strictPort` báo lỗi khi port bận, không tự mở port khác.
 
 ## Luồng demo
 1. Onboarding riêng: chọn **Bắt đầu với Vi**. LLM sinh câu hỏi, nhãn textbox, gợi ý nhập và lựa chọn nhanh theo thông tin còn thiếu. Chọn phương án hoặc tự trả lời; có thể nhắn tự do để sửa hồ sơ. Khi đủ thông tin, xem đề xuất rồi chọn **Đồng ý kế hoạch**.
 2. Trên PC: Sidebar → Main dinh dưỡng → nhân vật Vi 3D → Chat. Trên điện thoại, onboarding bắt đầu với Vi và chat; sau tạo kế hoạch, nội dung dinh dưỡng đứng trước, có nút quay về chat.
 3. Chọn ngày ở **Kế hoạch**; mở **Cách tính và nguồn** để kiểm tra công thức và giả định.
-4. Trong **Bữa ăn**, chụp/chọn ảnh rồi bấm **Phân tích ảnh**. Ảnh được gửi tới backend AI; kết quả gợi ý thành phần và gram để bạn kiểm tra, sửa hoặc bổ sung dầu/sốt. Không muốn gửi ảnh thì nhập tên món bằng tay.
+4. Trong **Bữa ăn**, chụp/chọn ảnh rồi bấm **Phân tích ảnh**. Ảnh được gửi tới LLM qua ứng dụng; kết quả gợi ý thành phần và gram để bạn kiểm tra, sửa hoặc bổ sung dầu/sốt. Không muốn gửi ảnh thì nhập tên món bằng tay.
 5. Xem macro ước lượng từ bộ giá trị thực phẩm minh họa chưa kiểm chứng. Rà soát món AI chưa nhận diện; chỉ tiếp tục sau khi xử lý danh sách đó. Bấm **Xác nhận đã ăn** để cộng vào nhật ký ngày đang chọn.
 6. Quay lại **Kế hoạch**: tổng đúng ngày cập nhật; xóa bữa để hoàn tác. Sửa hồ sơ tính lại kế hoạch và giữ nhật ký. **Xóa dữ liệu** yêu cầu xác nhận rồi xóa hồ sơ, kế hoạch, nhật ký, check-in, trò chuyện và ảnh.
 
 Onboarding không có sidebar hoặc điều hướng Kế hoạch. Biểu mẫu ba bước phục vụ chỉnh hồ sơ trong ứng dụng sau onboarding. Vi 3D phản hồi cùng hội thoại, nhìn theo con trỏ; có dừng chuyển động và reduced motion. Yêu cầu cập nhật tập trung vào desktop.
 
 ## Kiểm thử
-`pnpm exec playwright test` tự khởi động Vite nếu cần. Nếu máy chưa có Chromium: `pnpm exec playwright install chromium`. Bộ kiểm thử bao phủ công thức/khoảng, dữ liệu thiếu, onboarding hội thoại desktop/điện thoại, câu hỏi/ảnh trong chat, ghi/xóa bữa theo ngày và xóa dữ liệu.
+`pnpm test:api` kiểm tra hợp đồng LLM, xác thực đầu vào, onboarding, checklist, ảnh và HTTP trên cùng service (giả lập nhà cung cấp, không dùng API key thật). `pnpm exec playwright test` tự khởi động Vite nếu cần. Nếu máy chưa có Chromium: `pnpm exec playwright install chromium`. Bộ kiểm thử bao phủ công thức/khoảng, dữ liệu thiếu, onboarding hội thoại desktop/điện thoại, câu hỏi/ảnh trong chat, ghi/xóa bữa theo ngày và xóa dữ liệu.
+
+Các test `onboarding.spec.ts` và một số case cũ trong `onboarding-ai.spec.ts` còn dùng nút/ô nhập của giao diện trước đó, cần cập nhật selector. Dùng `pnpm test:api` để kiểm tra hợp đồng service tích hợp; kiểm thử này không xác minh Gateway thật.
 
 ## Giới hạn
-- Chat gửi hội thoại và hồ sơ đã khai báo tới backend AI; lịch sử vẫn lưu dưới dạng JSON trên thiết bị. Backend không lưu phiên hội thoại, nhưng nội dung được gửi tới nhà cung cấp AI. Kế hoạch và macro vẫn dùng công thức/dữ liệu demo. Khi người dùng bấm Phân tích ảnh, ảnh món ăn được gửi tới backend rồi nhà cung cấp AI; backend không ghi ảnh vào log và không lưu phiên. Nhà cung cấp có thể áp dụng log vận hành riêng.
+- Chat gửi hội thoại và hồ sơ đã khai báo tới LLM qua ứng dụng; lịch sử vẫn lưu dưới dạng JSON trên thiết bị. Ứng dụng không lưu phiên hội thoại, nhưng nội dung được gửi tới nhà cung cấp AI. Kế hoạch và macro vẫn dùng công thức/dữ liệu demo. Khi người dùng bấm Phân tích ảnh, ảnh món ăn được gửi tới ứng dụng rồi nhà cung cấp AI; ứng dụng không ghi ảnh vào log và không lưu phiên. Nhà cung cấp có thể áp dụng log vận hành riêng.
 - Bộ giá trị 12 thực phẩm là dữ liệu minh họa **chưa kiểm chứng**, ghi rõ ngay trong kết quả. Nguồn DOI công khai chỉ áp dụng công thức năng lượng nghỉ và khoảng protein.
 - Không phải tư vấn y tế; không tự tạo kế hoạch cho người dưới 18 tuổi.
-- Dữ liệu giao diện lưu dưới dạng JSON có phiên bản trong localStorage (`bua-viet:v1:*`); không cần database cho hồ sơ, kế hoạch và nhật ký. Chat cần backend theo hướng dẫn bên trên. Tải lại vẫn giữ hồ sơ, kế hoạch, nhật ký, check-in, hội thoại và nội dung nhập dở. Ảnh xem trước thu nhỏ tối đa 960 px, JPEG chất lượng 0,7 trước khi lưu. Dữ liệu nằm riêng ở trình duyệt/thiết bị hiện tại, chưa đồng bộ giữa thiết bị.
+- Dữ liệu giao diện lưu dưới dạng JSON có phiên bản trong localStorage (`bua-viet:v1:*`); không cần database cho hồ sơ, kế hoạch và nhật ký. Chat dùng xử lý AI trong cùng tiến trình ứng dụng. Tải lại vẫn giữ hồ sơ, kế hoạch, nhật ký, check-in, hội thoại và nội dung nhập dở. Ảnh xem trước thu nhỏ tối đa 960 px, JPEG chất lượng 0,7 trước khi lưu. Dữ liệu nằm riêng ở trình duyệt/thiết bị hiện tại, chưa đồng bộ giữa thiết bị.
 - **Tải bản JSON** xuất bản sao JSON của dữ liệu hiện tại, kể cả nội dung chưa ghi được khi bộ nhớ bị chặn; **Xóa dữ liệu** chỉ xóa các khóa của Bữa Việt. Nếu trình duyệt chặn lưu hoặc hết dung lượng, giao diện báo lỗi; dữ liệu chưa lưu chỉ còn trong bộ nhớ phiên.
-- Chat cần backend `chung-khao/chat-core` đang chạy và khóa API hợp lệ trong `.env`; không có chế độ AI khi backend chưa kết nối.
+- AI cần API key, địa chỉ API và model hợp lệ trong cấu hình server. Nếu nhà cung cấp từ chối yêu cầu hoặc chưa cấu hình khóa, giao diện báo lỗi và cho thử lại.
 
 ## Thiết kế và tài nguyên
 Be Vietnam Pro từ `@fontsource/be-vietnam-pro` (SIL OFL); Lucide (ISC); Three.js (MIT). Font tự phục vụ từ bundle. Nhân vật được dựng bằng hình học 3D trong mã nguồn; không dùng ảnh stock, ảnh AI hoặc model bên ngoài. Three.js tải riêng qua dynamic import.

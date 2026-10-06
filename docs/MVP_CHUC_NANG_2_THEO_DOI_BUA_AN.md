@@ -1,5 +1,7 @@
 # Kế hoạch MVP — Chức năng 2: Theo dõi và đánh giá bữa ăn
 
+> **Tài liệu lịch sử:** kế hoạch dưới đây dùng kiến trúc cũ. Backend Python đã được bỏ. Ứng dụng hiện tại ở `chung-khao/tro-ly-dinh-duong/`, chạy giao diện và xử lý AI trong một service Node.js; xem [hướng dẫn hiện tại](../chung-khao/tro-ly-dinh-duong/README.md).
+
 > Tài liệu giao việc cho 2 coding agent. Mục tiêu là bổ sung một luồng mobile web gọn vào phần `chat-core` đang có, giữ nguyên chức năng chat và không dựng thêm backend trong đợt MVP frontend này.
 
 ## Mục tiêu
