@@ -77,7 +77,7 @@ class OnboardingRequest(BaseModel):
         return self
 
 INSTRUCTIONS = '''Bạn là Vi, trợ lý thu thập hồ sơ dinh dưỡng cho người trưởng thành Việt Nam.
-Hội thoại nhiều lượt, hỏi thân thiện 1–2 câu mỗi lượt (tối đa 3 trường), không đưa biểu mẫu dài.
+Hội thoại nhiều lượt, gom tối đa 3 trường còn thiếu trong một lượt để người dùng trả lời nhanh; ưu tiên tuổi, cân nặng, chiều cao trước, rồi mục tiêu, hình thức tập, cường độ, giới tính và lịch tập. Không hỏi lại trường đã rõ. Người dùng có thể điền nhiều ô rồi gửi một lần hoặc nhập toàn bộ hồ sơ bằng tin nhắn tự do.
 CHỈ trả một đối tượng JSON hợp lệ, không Markdown hoặc văn bản bên ngoài, theo đúng cấu trúc:
 {"reply":"Câu nói ngắn bằng tiếng Việt của Vi", "profile":{}, "questions":[{"field":"age", "label":"Bạn bao nhiêu tuổi?", "placeholder":"Nhập số tuổi", "input_type":"number", "options":[]}], "blocked":false}.
 profile chỉ có các trường đã được người dùng thực sự cung cấp/xác nhận: age (số JSON nguyên, không đặt trong dấu nháy), weightKg, heightCm (số JSON), sex (male/female/unspecified), goal (maintain/gainMuscle/loseFat), trainingType (chuỗi tiếng Việt), trainingIntensity (Nhẹ/Vừa/Cao), weekSchedule.
@@ -196,15 +196,23 @@ def validate_turn(raw: str, prior: CollectedProfile | None = None) -> dict:
             logger.warning('Rejected onboarding response fields: %s', [(item.get('loc'), item.get('type')) for item in error.errors(include_input=False)])
         else:
             logger.warning('Rejected onboarding response format: %s', type(error).__name__)
-        raise chatbot.ChatbotError(502, 'Vi chưa tạo được câu hỏi hợp lệ. Hãy thử lại; câu trả lời đã nhập vẫn được giữ.') from None
+        # Model output can occasionally be malformed. Keep onboarding usable:
+        # retain the validated profile and ask the next missing field with a
+        # server-authored question instead of returning an error to the UI.
+        turn = ModelTurn(
+            reply='Mình vẫn giữ các thông tin đã ghi nhận. Bạn bổ sung giúp mình một mục còn thiếu nhé.',
+            profile=prior or CollectedProfile(),
+            questions=[],
+            blocked=bool(prior and prior.age is not None and prior.age < 18),
+        )
     profile = turn.profile.model_dump(exclude_none=True)
     blocked = turn.blocked or (turn.profile.age is not None and turn.profile.age < 18)
     missing = [field for field in CollectedProfile.model_fields if field not in profile]
     questions = [question for question in turn.questions if question.field in missing]
     if not blocked and missing and not questions:
         questions = [_fallback_question(missing[0])]
-    if len({question.field for question in questions}) != len(questions):
-        raise chatbot.ChatbotError(502, 'Vi tạo câu hỏi trùng lặp. Hãy thử lại.')
+    # Repeated model-generated questions are harmless; keep only the first.
+    questions = list({question.field: question for question in reversed(questions)}.values())[::-1]
     return {'reply':turn.reply, 'profile':profile, 'questions':[] if blocked else [q.model_dump() for q in questions], 'ready':not blocked and not missing, 'blocked':blocked}
 
 @router.post('/api/onboarding')
@@ -212,12 +220,22 @@ async def onboarding(payload: OnboardingRequest, request: Request):
     origin = request.headers.get('origin')
     if origin and urlsplit(origin).netloc != request.headers.get('host'):
         raise HTTPException(403, 'Nguồn yêu cầu không hợp lệ.')
-    context = {'profile':payload.profile.model_dump(exclude_none=True), 'answers':payload.answers}
+    answer_values = {
+        'sex': {'Nam': 'male', 'Nữ': 'female', 'Không cung cấp': 'unspecified'},
+        'goal': {'Duy trì': 'maintain', 'Tăng cơ': 'gainMuscle', 'Giảm mỡ': 'loseFat'},
+    }
+    submitted = {field: answer_values.get(field, {}).get(value.strip(), value.strip()) for field, value in payload.answers.items() if value.strip()}
+    confirmed = _validated_model_turn(json.dumps({'profile': submitted})).profile.model_dump(exclude_unset=True)
+    prior = CollectedProfile.model_validate({**payload.profile.model_dump(exclude_none=True), **confirmed})
+    context = {'profile':prior.model_dump(exclude_none=True), 'answers':payload.answers}
     messages = [message.model_dump() for message in payload.messages]
     messages[-1]['content'] += '\nDữ liệu hồ sơ/câu trả lời hiện tại (JSON):\n' + json.dumps(context, ensure_ascii=False)
     try:
         raw = await chatbot.ask_assistant(messages, instructions=INSTRUCTIONS)
-        return validate_turn(raw, payload.profile)
+        turn = validate_turn(raw, prior)
+        if confirmed:
+            turn = validate_turn(json.dumps({**turn, 'profile': {**turn['profile'], **confirmed}}), prior)
+        return turn
     except chatbot.ChatbotError as error:
         return JSONResponse(status_code=error.status_code, content={'error':error.message})
     except Exception:

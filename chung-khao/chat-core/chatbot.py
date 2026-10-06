@@ -13,9 +13,9 @@ ROOT_ENV = Path(__file__).resolve().parents[2] / ".env"
 # Render cung cấp biến môi trường riêng; chỉ nạp .env cục bộ khi biến chưa được đặt.
 load_dotenv(ROOT_ENV, override=False)
 
-API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
-BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
+API_KEY = (os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY") or os.getenv("THUCCHIEN_API_KEY") or "").strip()
+BASE_URL = (os.getenv("OPENAI_BASE_URL") or os.getenv("THUCCHIEN_BASE_URL") or "https://api.openai.com/v1").strip().rstrip("/")
+MODEL = (os.getenv("OPENAI_MODEL") or os.getenv("THUCCHIEN_MODEL") or "gpt-4.1-mini").strip()
 REQUEST_TIMEOUT = 45.0
 PROFILE_FIELDS = ("age", "sex", "height", "weight", "goal", "training_type", "intensity", "sessions", "schedule")
 PROFILE_FIELD_SET = frozenset(PROFILE_FIELDS)
@@ -135,7 +135,7 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
         async with asyncio.timeout(REQUEST_TIMEOUT):
             async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT, follow_redirects=False) as client:
                 response = await client.post(
-                    f"{BASE_URL}/responses",
+                    f"{BASE_URL.removesuffix('/responses')}/responses",
                     headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
                     json={
                         "model": MODEL,
@@ -154,7 +154,7 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
                 if response.status_code == 404:
                     raise ChatbotError(502, "Chưa truy cập được mô hình hoặc địa chỉ API đã cấu hình.")
                 if response.status_code == 400:
-                    raise ChatbotError(502, "Dịch vụ AI từ chối yêu cầu (HTTP 400). Cần kiểm tra cấu hình mô hình và yêu cầu gửi lên máy chủ.")
+                    raise ChatbotError(502, "Dịch vụ AI từ chối yêu cầu (HTTP 400). Cần kiểm tra địa chỉ API và cấu hình mô hình trên máy chủ.")
                 if not response.is_success:
                     raise ChatbotError(502, "Dịch vụ AI tạm thời chưa trả lời được. Bạn hãy thử lại.")
                 try:

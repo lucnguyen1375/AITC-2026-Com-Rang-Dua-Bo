@@ -5,7 +5,7 @@
 Ứng dụng được xây dựng bằng React, TypeScript và Vite, với giao diện tiếng Việt tối ưu cho điện thoại và máy tính.
 
 ## Chức năng trên giao diện
-- **Làm quen cùng Vi:** trả lời câu hỏi theo từng bước bằng lựa chọn nhanh hoặc nhập tự do; xem hồ sơ và đề xuất kế hoạch trước khi đồng ý. Có thể chỉnh sửa hồ sơ sau đó.
+- **Làm quen cùng Vi:** điền tuổi, cân nặng, chiều cao trong một lượt hoặc gửi cả hồ sơ bằng tin nhắn; Vi gom tối đa ba câu hỏi còn thiếu mỗi lượt. Xem đề xuất trước khi đồng ý và có thể chỉnh sửa hồ sơ sau đó.
 - **Kế hoạch dinh dưỡng:** xem mục tiêu năng lượng và dưỡng chất theo ngày, chọn ngày cần theo dõi, xem cách tính và nguồn tham khảo.
 - **Nhật ký bữa ăn:** nhập món hoặc chụp/chọn ảnh để AI gợi ý món và khẩu phần; kiểm tra, chỉnh sửa thành phần rồi xác nhận đã ăn. Có thể sửa hoặc xóa bữa đã ghi.
 - **Trò chuyện với Vi:** trao đổi để cập nhật thông tin và nhận hướng dẫn trong giao diện có nhân vật Vi 3D; có tùy chọn dừng chuyển động.

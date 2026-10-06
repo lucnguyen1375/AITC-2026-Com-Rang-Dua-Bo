@@ -29,10 +29,23 @@ class OnboardingTests(unittest.IsolatedAsyncioTestCase):
  def test_partial_model_update_preserves_prior_profile(self):
   turn=validate_turn(result({'weightKg':68},[]),CollectedProfile.model_validate(PROFILE))
   self.assertTrue(turn['ready']);self.assertEqual(turn['profile']['age'],25);self.assertEqual(turn['profile']['weightKg'],68)
- def test_invalid_ui_or_json_rejected(self):
-  with self.assertRaises(chatbot.ChatbotError):validate_turn('not json')
+ def test_invalid_ui_or_json_uses_next_question(self):
+  turn=validate_turn('not json')
+  self.assertFalse(turn['ready']);self.assertEqual(turn['questions'][0]['field'],'age')
   turn=validate_turn(result({},[{'field':'html','label':'x','input_type':'text','options':[]}]))
   self.assertEqual(turn['questions'][0]['field'],'age')
+ async def test_selected_answer_survives_malformed_model_response(self):
+  with patch.object(chatbot,'ask_assistant',AsyncMock(return_value='not json')):
+   response=await self.post({'messages':[{'role':'user','content':'Mục tiêu: Tăng cơ'}],'profile':{'age':25,'weightKg':65,'heightCm':170},'answers':{'goal':'Tăng cơ'}})
+  self.assertEqual(response.status_code,200)
+  self.assertEqual(response.json()['profile']['goal'],'gainMuscle')
+  self.assertEqual(response.json()['profile']['age'],25)
+  self.assertNotEqual(response.json()['questions'][0]['field'],'goal')
+ async def test_selected_answer_overrides_stale_model_value(self):
+  with patch.object(chatbot,'ask_assistant',AsyncMock(return_value=result({'goal':'maintain'},[]))):
+   response=await self.post({'messages':[{'role':'user','content':'Mục tiêu: Giảm mỡ'}],'answers':{'goal':'Giảm mỡ'}})
+  self.assertEqual(response.status_code,200)
+  self.assertEqual(response.json()['profile']['goal'],'loseFat')
  def test_wrapped_json_and_missing_questions_keep_flow_moving(self):
   raw='Vi sẽ hỏi tiếp nhé.\n```json\n'+json.dumps({'reply':'Mình hỏi thêm nhé.','profile':{},'questions':[]},ensure_ascii=False)+'\n```'
   turn=validate_turn(raw)

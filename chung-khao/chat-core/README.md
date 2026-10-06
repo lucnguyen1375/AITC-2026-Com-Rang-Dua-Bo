@@ -1,6 +1,6 @@
 # Chatbot tư vấn dinh dưỡng
 
-Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi OpenAI Responses API. API `/api/chat` được đấu nối với giao diện React trong `chung-khao/tro-ly-dinh-duong`; `static/index.html` vẫn có thể dùng để chạy thử backend độc lập.
+Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi OpenAI Responses API trực tiếp. API `/api/chat` được đấu nối với giao diện React trong `chung-khao/tro-ly-dinh-duong`; `static/index.html` vẫn có thể dùng để chạy thử backend độc lập.
 
 Đây là công cụ tham khảo, không phải dịch vụ y tế. API chat có thể nhận ảnh món ăn để tư vấn; endpoint riêng phân tích ảnh trả về tên món và khối lượng tham khảo. Không phân tích ảnh cơ thể.
 
@@ -53,6 +53,8 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
 Không đưa khóa vào frontend hoặc commit tệp `.env`. Khóa chỉ được dùng ở backend. Máy chủ không ghi nội dung hội thoại hoặc khóa vào log ứng dụng. Khi chạy trong Render, cấu hình `OPENAI_API_KEY` ở phần Environment của service; Render tự cấp biến `PORT`.
+
+Backend vẫn hỗ trợ các tên cấu hình cũ `API_KEY`, `THUCCHIEN_API_KEY`, `THUCCHIEN_BASE_URL`, `THUCCHIEN_MODEL` khi chưa có biến `OPENAI_*` tương ứng. URL có sẵn `/responses` cũng được hỗ trợ. Sau khi sửa `.env`, khởi động lại backend để nạp cấu hình mới.
 
 Máy chủ mặc định lắng nghe trên `0.0.0.0`; có thể mở thử trên điện thoại cùng mạng Wi-Fi bằng `http://<địa chỉ IP máy tính>:3000`. Đây là máy chủ thử nghiệm, chưa có đăng nhập hoặc giới hạn lượt gọi riêng; chỉ dùng trong mạng tin cậy.
 

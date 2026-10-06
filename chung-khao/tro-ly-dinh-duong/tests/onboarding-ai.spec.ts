@@ -3,6 +3,38 @@ import path from 'node:path';
 const review=path.resolve('../../.impeccable/review/onboarding-ai');
 const profile={age:25,weightKg:65,heightCm:170,sex:'unspecified',goal:'gainMuscle',trainingType:'Tập sức mạnh',trainingIntensity:'Vừa',weekSchedule:Array.from({length:7},(_,i)=>({weekday:i+1,isRestDay:![0,2,4].includes(i),startTime:[0,2,4].includes(i)?'18:00':'00:00',durationMinutes:[0,2,4].includes(i)?60:10}))};
 const question={field:'goal',label:'Bạn muốn tập trung vào mục tiêu nào lúc này?',placeholder:'Hoặc chia sẻ mục tiêu riêng của bạn',input_type:'text',options:[{label:'Tăng cơ cùng Vi',value:'Tăng cơ'},{label:'Giữ nhịp hiện tại',value:'Giữ thể trạng'}]};
+test('Chọn đáp án tiếp tục khi câu hỏi AI thiếu các thuộc tính UI',async({page})=>{
+ const errors:string[]=[];const bodies:any[]=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.route('**/api/onboarding',async route=>{
+  bodies.push(route.request().postDataJSON());
+  await route.fulfill({json:bodies.length===1?{reply:'Chọn mục tiêu nhé.',profile:{age:25,weightKg:65,heightCm:170},questions:[{field:'goal',label:'Mục tiêu của bạn?',options:[{label:'Tăng cơ',value:'gainMuscle'}]}]}:{reply:'Bạn thường tập gì?',profile:{goal:'gainMuscle'},questions:[{field:'trainingType',label:'Loại hình tập của bạn?'}]}});
+ });
+ await page.goto('/');
+ await page.getByRole('spinbutton',{name:'Tuổi',exact:true}).fill('25');
+ await page.getByRole('button',{name:'Gửi câu trả lời',exact:true}).click();
+ await page.getByRole('button',{name:'Tăng cơ',exact:true}).click();
+ await expect(page.getByRole('textbox',{name:'Loại hình tập của bạn?',exact:true})).toBeVisible();
+ await expect(page.getByRole('alert')).toHaveCount(0);
+ expect(bodies[1].answers).toEqual({goal:'gainMuscle'});
+ await expect(page.getByText('4 / 8 thông tin đã rõ',{exact:true})).toBeVisible();
+ expect(errors).toEqual([]);
+});
+
+test('Chọn đáp án lỗi mạng vẫn giữ lựa chọn để thử lại',async({page})=>{
+ let calls=0;const bodies:any[]=[];
+ await page.route('**/api/onboarding',async route=>{
+  calls++;bodies.push(route.request().postDataJSON());
+  await route.fulfill(calls===2?{status:504,json:{error:'Chờ phản hồi quá lâu.'}}:{json:{reply:'Chọn mục tiêu nhé.',profile:{age:25},questions:[question],ready:false,blocked:false}});
+ });
+ await page.goto('/');await page.getByRole('spinbutton',{name:'Tuổi',exact:true}).fill('25');
+ await page.getByRole('button',{name:'Gửi câu trả lời',exact:true}).click();
+ await page.getByRole('button',{name:'Tăng cơ cùng Vi',exact:true}).click();
+ await expect(page.getByRole('alert')).toContainText('Chờ phản hồi quá lâu');
+ await expect(page.getByRole('textbox',{name:question.label})).toHaveValue('Tăng cơ');
+ await page.getByRole('button',{name:'Thử lại',exact:true}).click();
+ await expect(page.getByRole('alert')).toHaveCount(0);
+ expect(bodies[2]).toEqual(bodies[1]);
+});
 test('Desktop: UI do LLM sinh, chọn nhanh, trả lời tự do, sửa và thống nhất',async({page})=>{
  const errors:string[]=[];const requests:any[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1440,height:1000});await page.emulateMedia({reducedMotion:'reduce'});

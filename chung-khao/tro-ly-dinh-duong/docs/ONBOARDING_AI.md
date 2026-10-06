@@ -10,7 +10,7 @@ Chạy `python app.py` trong `chung-khao/chat-core` và `pnpm dev` trong `chung-
 
 AI thu thập hồ sơ và dẫn dắt hội thoại. Chỉ số đề xuất vẫn được tính bằng công thức trong `services/nutrition.ts`, có nguồn và giả định riêng; đây là kế hoạch tham khảo. Dưới 18 tuổi không tạo kế hoạch tự động. Onboarding không gửi ảnh đến LLM. Hồ sơ, hội thoại và bản nháp lưu dạng JSON trên thiết bị; nội dung câu trả lời được gửi đến OpenAI để xử lý.
 
-Lỗi mạng, hết thời gian hoặc đầu ra LLM không hợp lệ hiển thị thông báo và nút **Thử lại**. Giữ câu trả lời, không thêm trùng lượt khi thử lại và không thay bằng hội thoại giả.
+Lỗi mạng hoặc hết thời gian hiển thị thông báo và nút **Thử lại**. Giữ cả đáp án đã chọn, không thêm trùng lượt khi thử lại. Đầu ra LLM sai định dạng không chặn onboarding: backend giữ hồ sơ và đáp án có nhãn đã ghi nhận, hỏi tiếp trường còn thiếu; frontend bổ sung thuộc tính UI còn thiếu thay vì báo lỗi validate. Hồ sơ vẫn phải đầy đủ trước khi tạo đề xuất.
 
 ## Kiểm tra
 

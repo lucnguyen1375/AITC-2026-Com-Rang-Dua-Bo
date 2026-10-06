@@ -41,7 +41,9 @@ def response_output(text="Câu trả lời."):
     }
 
 
-def test_responses_contract_and_history(client, monkeypatch):
+@pytest.mark.parametrize("base_url", ["https://api.openai.com/v1", "https://api.openai.com/v1/responses"])
+def test_responses_contract_and_history(client, monkeypatch, base_url):
+    monkeypatch.setattr(chatbot, "BASE_URL", base_url)
     captured = []
 
     def upstream(request):
@@ -61,7 +63,7 @@ def test_responses_contract_and_history(client, monkeypatch):
     assert response.json() == {"reply": "Phần một.\nPhần hai."}
     request = captured[0]
     payload = json.loads(request.content)
-    assert str(request.url) == "https://openai.example/v1/responses"
+    assert str(request.url) == "https://api.openai.com/v1/responses"
     assert request.headers["authorization"] == "Bearer fake-test-key"
     assert payload["model"] == "gpt-4.1-mini"
     assert "reasoning" not in payload
