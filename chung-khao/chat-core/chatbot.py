@@ -1,6 +1,7 @@
 """Gọi API Thực Chiến và cung cấp chỉ dẫn tư vấn dinh dưỡng."""
 
 import asyncio
+import json
 import os
 import re
 from pathlib import Path
@@ -19,6 +20,20 @@ REQUEST_TIMEOUT = 45.0
 PROFILE_FIELDS = ("age", "sex", "height", "weight", "goal", "training_type", "intensity", "sessions", "schedule")
 PROFILE_FIELD_SET = frozenset(PROFILE_FIELDS)
 PROFILE_MARKER = re.compile(r"\[\[PROFILE_FIELDS:([a-z_,]+)\]\]")
+MEAL_FOODS = {
+    "rice": "Cơm trắng",
+    "chicken": "Ức gà",
+    "beef": "Thịt bò",
+    "egg": "Trứng gà",
+    "fish": "Cá",
+    "tofu": "Đậu phụ",
+    "vegetable": "Rau xanh",
+    "banana": "Chuối",
+    "milk": "Sữa tươi",
+    "sweetpotato": "Khoai lang",
+    "peanut": "Lạc",
+    "oil": "Dầu ăn",
+}
 
 INSTRUCTIONS = """Bạn là trợ lý dinh dưỡng tiếng Việt dành cho người trưởng thành tập luyện cường độ cao tại Việt Nam. Tư vấn chỉ để tham khảo, không phải dịch vụ y tế. Trả lời hoàn toàn bằng tiếng Việt, cụ thể, trung tính và ngắn gọn. Dùng văn bản có xuống dòng, không dùng bảng hoặc cú pháp Markdown như ** hay #.
 
@@ -112,7 +127,7 @@ def extract_profile_request(reply: str) -> tuple[str, list[str]]:
     return clean_reply, requested
 
 
-async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: bool = False) -> str:
+async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: bool = False, instructions: str | None = None) -> str:
     if not API_KEY:
         raise ChatbotError(503, "Chưa kết nối dịch vụ AI. Cần cấu hình khóa trên máy chủ.")
     try:
@@ -124,7 +139,7 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
                     headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
                     json={
                         "model": MODEL,
-                        "instructions": INSTRUCTIONS + (PROFILE_COMPLETION_INSTRUCTIONS if profile_completion else ""),
+                        "instructions": instructions if instructions is not None else INSTRUCTIONS + (PROFILE_COMPLETION_INSTRUCTIONS if profile_completion else ""),
                         "input": messages,
                         "stream": False,
                         "store": False,
@@ -149,3 +164,40 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
         raise ChatbotError(504, "Chờ phản hồi quá lâu. Bạn hãy thử lại.") from None
     except httpx.RequestError:
         raise ChatbotError(502, "Không kết nối được dịch vụ AI. Bạn hãy thử lại.") from None
+
+
+async def analyze_meal_photo(image_data_url: str, description: str = "") -> dict[str, object]:
+    """Nhận diện thành phần sơ bộ; macro sẽ được tính từ dữ liệu cục bộ của ứng dụng."""
+    food_options = "\n".join(f"{food_id}: {name}" for food_id, name in MEAL_FOODS.items())
+    prompt = f"""Ước tính các thành phần món ăn nhìn thấy trong ảnh để người dùng tự rà soát. Mô tả thêm của người dùng: {description or 'Không có'}.
+Chỉ chọn món nhìn thấy rõ từ danh sách này:
+{food_options}
+Ước tính khối lượng ăn được bằng gram, làm tròn tới 5 g. Không tự thêm dầu, sốt hoặc nguyên liệu bị che khuất. Mỗi món chỉ xuất hiện một lần. Món ngoài danh sách hoặc không xác định được phải ghi vào unknown_items, không ép thành món gần giống.
+Chỉ trả về một JSON object thuần theo cấu trúc: {{"items":[{{"food_id":"rice","grams":150}}],"unknown_items":["nước sốt chưa rõ"]}}. Nếu không nhận diện được món nào, trả items rỗng. Không trả macro, calo, lời giải thích hoặc markdown."""
+    raw = await ask_assistant(
+        [{"role": "user", "content": [
+            {"type": "input_text", "text": prompt},
+            {"type": "input_image", "image_url": image_data_url},
+        ]}],
+        instructions="Nhận diện thực phẩm nhìn thấy trong ảnh. Không đưa lời khuyên y tế. Khẩu phần là ước tính có giới hạn và không thể xác định chính xác chỉ từ ảnh.",
+    )
+    try:
+        parsed = json.loads(raw)
+    except (TypeError, ValueError):
+        raise ChatbotError(502, "Ảnh chưa được phân tích thành kết quả hợp lệ. Hãy thử lại hoặc nhập món bằng tay.") from None
+    if not isinstance(parsed, dict) or not isinstance(parsed.get("items"), list) or not isinstance(parsed.get("unknown_items"), list):
+        raise ChatbotError(502, "Ảnh chưa được phân tích thành kết quả hợp lệ. Hãy thử lại hoặc nhập món bằng tay.")
+    if len(parsed["items"]) > 20 or len(parsed["unknown_items"]) > 12:
+        raise ChatbotError(502, "Ảnh có quá nhiều thành phần để ước tính cùng lúc. Hãy nhập món bằng tay.")
+
+    items: list[dict[str, object]] = []
+    for item in parsed["items"]:
+        if not isinstance(item, dict):
+            raise ChatbotError(502, "Kết quả nhận diện ảnh không hợp lệ. Hãy thử lại.")
+        food_id, grams = item.get("food_id"), item.get("grams")
+        if food_id not in MEAL_FOODS or isinstance(grams, bool) or not isinstance(grams, (int, float)) or not 1 <= grams <= 3000:
+            raise ChatbotError(502, "Kết quả nhận diện ảnh không hợp lệ. Hãy thử lại hoặc nhập món bằng tay.")
+        items.append({"food_id": food_id, "grams": max(1, int(round(grams / 5) * 5))})
+
+    unknown_items = [name.strip()[:100] for name in parsed["unknown_items"] if isinstance(name, str) and name.strip()][:12]
+    return {"items": items, "unknown_items": unknown_items}

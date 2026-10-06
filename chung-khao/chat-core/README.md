@@ -1,6 +1,7 @@
 # Chatbot tư vấn dinh dưỡng
 
 Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi mô hình AI Thực Chiến; frontend HTML/CSS/JavaScript cung cấp một trang chat gọn, dùng được trên điện thoại.
+Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi mô hình AI Thực Chiến. API `/api/chat` được đấu nối với giao diện React trong `chung-khao/tro-ly-dinh-duong`; `static/index.html` vẫn có thể dùng để chạy thử backend độc lập.
 
 Đây là công cụ tham khảo, không phải dịch vụ y tế. Ứng dụng hiện chỉ nhận văn bản; chưa phân tích ảnh món ăn hoặc ảnh cơ thể.
 
@@ -31,6 +32,18 @@ python app.py
 ```
 
 Mở http://localhost:3000. Có thể chọn cổng bằng biến `CHAT_PORT`.
+
+## Chạy cùng giao diện Bữa Việt
+
+Khởi động backend ở cổng 3000 theo các bước trên. Trong terminal khác, chạy giao diện:
+
+```powershell
+cd chung-khao/tro-ly-dinh-duong
+pnpm install
+pnpm dev
+```
+
+Vite chuyển tiếp `/api/chat` tới FastAPI mà không đưa khóa API vào trình duyệt. Khi triển khai ngoài môi trường phát triển, cấu hình máy chủ web chuyển tiếp cùng đường dẫn tới FastAPI. Chat gửi lịch sử hội thoại và hồ sơ người dùng đã khai báo tới dịch vụ AI; ảnh chỉ lưu trên thiết bị và không được gửi tới API.
 
 Ứng dụng đọc `.env` ở thư mục gốc của repository, không phụ thuộc thư mục terminal. Cấu hình cần có:
 
@@ -117,3 +130,4 @@ python -m pytest -q
 ```
 
 Bộ kiểm tra hiện có dùng HTTP giả lập, không gọi mô hình thật. Các thay đổi gần đây về biểu mẫu frontend và phản hồi sau biểu mẫu cần được thử trên trình duyệt riêng.
+Với giao diện React, lịch sử hội thoại lưu trong JSON có phiên bản ở localStorage; ảnh xem trước không được gửi tới backend. Backend không lưu phiên hội thoại. Nội dung và hồ sơ người dùng vẫn được gửi tới dịch vụ AI Thực Chiến để tạo phản hồi; `store: false` không khẳng định nhà cung cấp không ghi log vận hành. Trang HTML độc lập chỉ giữ lịch sử trong bộ nhớ của trang đang mở.

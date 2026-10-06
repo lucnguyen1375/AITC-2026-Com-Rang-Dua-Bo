@@ -1,6 +1,9 @@
 """Máy chủ API và trang HTML thử chatbot."""
 
 import os
+import base64
+import json
+import re
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
@@ -16,11 +19,37 @@ import chatbot
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 HTML_FILE = Path(__file__).resolve().parent / "static" / "index.html"
 MAX_BODY_BYTES = 128 * 1024
+from onboarding import router as onboarding_router
+from plan_actions import PlanContext, PlanUpdate, PLAN_INSTRUCTIONS, VISION_INSTRUCTIONS, extract_plan_updates
+
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+app.include_router(onboarding_router)
+HTML_FILE = Path(__file__).resolve().parent / "static" / "index.html"
+MAX_BODY_BYTES = 128 * 1024
+MAX_CHAT_BODY_BYTES = 2 * 1024 * 1024
 
 
 class Message(BaseModel):
     role: Literal["user", "assistant"]
     content: str = Field(min_length=1, max_length=20000)
+    image: str | None = Field(default=None, max_length=1500000)
+
+    @field_validator("image")
+    @classmethod
+    def validate_image(cls, value):
+        if value is None:
+            return value
+        match = re.fullmatch(r"data:image/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)", value)
+        if not match:
+            raise ValueError("Ảnh phải là JPEG, PNG hoặc WebP.")
+        try:
+            decoded = base64.b64decode(match.group(2), validate=True)
+        except ValueError:
+            raise ValueError("Ảnh không hợp lệ.") from None
+        signatures = {"jpeg": decoded.startswith(b"\xff\xd8\xff"), "png": decoded.startswith(b"\x89PNG\r\n\x1a\n"), "webp": decoded.startswith(b"RIFF") and decoded[8:12] == b"WEBP"}
+        if not signatures[match.group(1)] or len(decoded) > 1024 * 1024:
+            raise ValueError("Ảnh không hợp lệ hoặc quá lớn.")
+        return value
 
     @field_validator("content")
     @classmethod
@@ -67,16 +96,20 @@ class ProfileAnswers(BaseModel):
 class ChatRequest(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=80)
     profile_answers: ProfileAnswers | None = None
+    plan_context: PlanContext | None = None
 
     @model_validator(mode="after")
     def last_message_is_user(self):
         if self.messages[-1].role != "user":
             raise ValueError("Tin nhắn cuối cần là câu hỏi của bạn.")
+        if any(message.image for message in self.messages[:-1]):
+            raise ValueError("Chỉ gửi ảnh của tin nhắn mới nhất.")
         return self
 
 
 class ChatResponse(BaseModel):
     reply: str
+    plan_updates: list[PlanUpdate] | None = None
     profile_request: list[Literal["age", "sex", "height", "weight", "goal", "training_type", "intensity", "sessions", "schedule"]] | None = None
 
 
@@ -86,6 +119,11 @@ async def response_headers_and_body_limit(request: Request, call_next):
         body = await request.body()
         if len(body) > MAX_BODY_BYTES:
             return JSONResponse(status_code=413, content={"error": "Hội thoại quá dài. Bạn hãy bắt đầu lại."}, headers={"Cache-Control": "no-store"})
+    if request.method == "POST" and request.url.path in {"/api/chat", "/api/onboarding"}:
+        body = await request.body()
+        limit = MAX_CHAT_BODY_BYTES if request.url.path == "/api/chat" else MAX_BODY_BYTES
+        if len(body) > limit:
+            return JSONResponse(status_code=413, content={"error": "Hội thoại hoặc ảnh quá lớn. Hãy giảm kích thước ảnh hoặc rút gọn nội dung."}, headers={"Cache-Control": "no-store"})
     response = await call_next(request)
     response.headers["Cache-Control"] = "no-store"
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -124,6 +162,7 @@ async def chat(payload: ChatRequest, request: Request):
             raise HTTPException(403, "Nguồn yêu cầu không hợp lệ.")
     try:
         messages = [message.model_dump() for message in payload.messages]
+        messages = [message.model_dump(exclude_none=True) for message in payload.messages]
         profile_completion = payload.profile_answers is not None
         if payload.profile_answers:
             labels = {
@@ -143,6 +182,18 @@ async def chat(payload: ChatRequest, request: Request):
             messages[-1]["content"] = "Thông tin bổ sung từ biểu mẫu (người dùng tự khai):\n" + details
         reply = await chatbot.ask_assistant(messages, profile_completion=profile_completion)
         reply, requested_fields = chatbot.extract_profile_request(reply)
+        instructions = chatbot.INSTRUCTIONS.replace("Phiên bản này chỉ nhận văn bản, chưa phân tích ảnh.", "") + VISION_INSTRUCTIONS
+        if profile_completion:
+            instructions += chatbot.PROFILE_COMPLETION_INSTRUCTIONS
+        if payload.plan_context:
+            instructions += PLAN_INSTRUCTIONS + "\nDữ liệu kế hoạch hiện tại (JSON):\n" + json.dumps(payload.plan_context.model_dump(mode="json", exclude_none=True), ensure_ascii=False)
+        for message in messages:
+            image = message.pop("image", None)
+            if image:
+                message["content"] = [{"type": "input_text", "text": message["content"]}, {"type": "input_image", "image_url": image}]
+        reply = await chatbot.ask_assistant(messages, profile_completion=profile_completion, instructions=instructions)
+        reply, requested_fields = chatbot.extract_profile_request(reply)
+        reply, updates = extract_plan_updates(reply, payload.plan_context)
     except chatbot.ChatbotError as error:
         return JSONResponse(status_code=error.status_code, content={"error": error.message})
     except Exception:
@@ -151,6 +202,7 @@ async def chat(payload: ChatRequest, request: Request):
     if profile_completion:
         requested_fields = []
     return ChatResponse(reply=reply, profile_request=requested_fields or None)
+    return ChatResponse(reply=reply, profile_request=requested_fields or None, plan_updates=updates or None)
 
 
 if __name__ == "__main__":
