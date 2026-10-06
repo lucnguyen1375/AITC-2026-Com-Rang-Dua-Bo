@@ -1,6 +1,17 @@
 # Bữa Việt — Ăn theo nhịp tập
 
-Ứng dụng React + TypeScript + Vite, giao diện tiếng Việt, tối ưu điện thoại và desktop.
+**Bữa Việt** là ứng dụng trợ lý dinh dưỡng dành cho người tập luyện. Người dùng trò chuyện với Vi để tạo hồ sơ và nhận kế hoạch ăn uống phù hợp, theo dõi năng lượng và dưỡng chất theo ngày, đồng thời ghi nhật ký bữa ăn bằng cách nhập món hoặc phân tích ảnh. Kế hoạch và giá trị dinh dưỡng hiện mang tính tham khảo.
+
+Ứng dụng được xây dựng bằng React, TypeScript và Vite, với giao diện tiếng Việt tối ưu cho điện thoại và máy tính.
+
+## Chức năng trên giao diện
+- **Làm quen cùng Vi:** trả lời câu hỏi theo từng bước bằng lựa chọn nhanh hoặc nhập tự do; xem hồ sơ và đề xuất kế hoạch trước khi đồng ý. Có thể chỉnh sửa hồ sơ sau đó.
+- **Kế hoạch dinh dưỡng:** xem mục tiêu năng lượng và dưỡng chất theo ngày, chọn ngày cần theo dõi, xem cách tính và nguồn tham khảo.
+- **Nhật ký bữa ăn:** nhập món hoặc chụp/chọn ảnh để AI gợi ý món và khẩu phần; kiểm tra, chỉnh sửa thành phần rồi xác nhận đã ăn. Có thể sửa hoặc xóa bữa đã ghi.
+- **Trò chuyện với Vi:** trao đổi để cập nhật thông tin và nhận hướng dẫn trong giao diện có nhân vật Vi 3D; có tùy chọn dừng chuyển động.
+- **Quản lý dữ liệu:** dữ liệu lưu trên thiết bị hiện tại; có thể tải bản sao JSON hoặc xóa dữ liệu ứng dụng. Giao diện thích ứng với điện thoại và máy tính.
+
+Kế hoạch và giá trị dinh dưỡng là ước lượng tham khảo, không thay thế tư vấn y tế.
 
 ## Chạy
 ```powershell

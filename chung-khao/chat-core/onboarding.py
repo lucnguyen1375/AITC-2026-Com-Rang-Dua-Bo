@@ -1,5 +1,7 @@
 """Onboarding nhiều lượt: LLM tạo câu hỏi, backend kiểm tra hồ sơ và UI schema."""
 import json
+import logging
+import re
 from typing import Literal
 from urllib.parse import urlsplit
 
@@ -9,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 import chatbot
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 ProfileField = Literal['age', 'weightKg', 'heightCm', 'sex', 'goal', 'trainingType', 'trainingIntensity', 'weekSchedule']
 
 class TrainingDay(BaseModel):
@@ -77,7 +80,7 @@ INSTRUCTIONS = '''Bạn là Vi, trợ lý thu thập hồ sơ dinh dưỡng cho 
 Hội thoại nhiều lượt, hỏi thân thiện 1–2 câu mỗi lượt (tối đa 3 trường), không đưa biểu mẫu dài.
 CHỈ trả một đối tượng JSON hợp lệ, không Markdown hoặc văn bản bên ngoài, theo đúng cấu trúc:
 {"reply":"Câu nói ngắn bằng tiếng Việt của Vi", "profile":{}, "questions":[{"field":"age", "label":"Bạn bao nhiêu tuổi?", "placeholder":"Nhập số tuổi", "input_type":"number", "options":[]}], "blocked":false}.
-profile chỉ có các trường đã được người dùng thực sự cung cấp/xác nhận: age (số nguyên), weightKg, heightCm (số), sex (male/female/unspecified), goal (maintain/gainMuscle/loseFat), trainingType (chuỗi tiếng Việt), trainingIntensity (Nhẹ/Vừa/Cao), weekSchedule.
+profile chỉ có các trường đã được người dùng thực sự cung cấp/xác nhận: age (số JSON nguyên, không đặt trong dấu nháy), weightKg, heightCm (số JSON), sex (male/female/unspecified), goal (maintain/gainMuscle/loseFat), trainingType (chuỗi tiếng Việt), trainingIntensity (Nhẹ/Vừa/Cao), weekSchedule.
 Giữ thông tin đã thu thập từ ngữ cảnh, ưu tiên câu trả lời mới. Không suy đoán, không dùng số đo mẫu làm hồ sơ thật. Các trường chưa biết phải thiếu hoặc null. Thu thập đủ tám trường, không hỏi lại trường đã rõ. Người dùng có thể trả lời bằng văn bản tự do hoặc các answers có nhãn.
 Bạn tự viết label, placeholder và các options [{"label":"Nhãn tiếng Việt", "value":"Câu trả lời tiếng Việt"}] phù hợp thông tin còn thiếu. Mục tiêu, giới tính, hình thức và cường độ tập nên có 2–5 lựa chọn nhanh; vẫn cho nhập tự do. Không gợi ý số tuổi/cân nặng/chiều cao giả cho người dùng chọn.
 sex là tùy chọn: cung cấp lựa chọn Không cung cấp -> unspecified, không tự suy đoán giới tính. Mục tiêu ngoài ba nhóm cần hỏi làm rõ. Đổi kg/cm chỉ khi đơn vị người dùng rõ.
@@ -139,14 +142,60 @@ def _fallback_question(field: str) -> Question:
     return Question.model_validate({'field': field, 'label': label, 'placeholder': placeholder, 'input_type': input_type, 'options': options})
 
 
+def _validated_model_turn(raw: str) -> ModelTurn:
+    data = json.loads(_json_object_from_reply(raw))
+    if not isinstance(data, dict):
+        raise ValueError('Turn must be an object')
+
+    # Validate independently so one malformed optional field does not discard
+    # the rest of a useful turn. Invalid fields become unanswered and are asked again.
+    profile_data = data.get('profile') if isinstance(data.get('profile'), dict) else {}
+    normalized_profile = {}
+    for field, value in profile_data.items():
+        if field not in CollectedProfile.model_fields or value is None:
+            continue
+        if field == 'age' and isinstance(value, str) and re.fullmatch(r'\s*\d{1,3}\s*', value):
+            value = int(value)
+        try:
+            valid_field = CollectedProfile.model_validate({field: value})
+        except ValidationError:
+            continue
+        normalized_profile[field] = getattr(valid_field, field)
+
+    raw_questions = data.get('questions')
+    questions = []
+    if isinstance(raw_questions, list):
+        for question in raw_questions[:3]:
+            if not isinstance(question, dict):
+                continue
+            try:
+                questions.append(Question.model_validate({key: question[key] for key in ('field', 'label', 'placeholder', 'input_type', 'options') if key in question}))
+            except ValidationError:
+                continue
+
+    reply = data.get('reply')
+    if not isinstance(reply, str) or not reply.strip() or len(reply) > 4000:
+        reply = 'Mình sẽ hỏi thêm một thông tin để hoàn thiện hồ sơ nhé.'
+    return ModelTurn.model_validate({
+        'reply': reply.strip(),
+        'profile': normalized_profile,
+        'questions': [question.model_dump() for question in questions],
+        'blocked': data.get('blocked') if isinstance(data.get('blocked'), bool) else False,
+    })
+
+
 def validate_turn(raw: str, prior: CollectedProfile | None = None) -> dict:
     try:
-        turn = ModelTurn.model_validate(json.loads(_json_object_from_reply(raw)))
+        turn = _validated_model_turn(raw)
         if prior is not None:
             # Không xóa câu trả lời cũ chỉ vì LLM bỏ sót trường trong lượt mới.
             # null tường minh vẫn cho phép hỏi lại thông tin người dùng vừa sửa.
             turn.profile = CollectedProfile.model_validate({**prior.model_dump(exclude_none=True), **turn.profile.model_dump(exclude_unset=True)})
-    except (ValueError, ValidationError, IndexError):
+    except (ValueError, ValidationError, IndexError) as error:
+        if isinstance(error, ValidationError):
+            logger.warning('Rejected onboarding response fields: %s', [(item.get('loc'), item.get('type')) for item in error.errors(include_input=False)])
+        else:
+            logger.warning('Rejected onboarding response format: %s', type(error).__name__)
         raise chatbot.ChatbotError(502, 'Vi chưa tạo được câu hỏi hợp lệ. Hãy thử lại; câu trả lời đã nhập vẫn được giữ.') from None
     profile = turn.profile.model_dump(exclude_none=True)
     blocked = turn.blocked or (turn.profile.age is not None and turn.profile.age < 18)
