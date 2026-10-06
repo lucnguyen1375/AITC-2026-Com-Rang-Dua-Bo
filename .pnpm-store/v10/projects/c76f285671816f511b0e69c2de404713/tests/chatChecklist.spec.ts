@@ -1,0 +1,88 @@
+import { test, expect } from '@playwright/test';
+import path from 'node:path';
+import { demoProfile } from '../src/data/fixtures';
+import { createPlan } from '../src/services/nutrition';
+import { starterCheckIns } from '../src/services/streak';
+import { applyCheckInUpdates } from '../src/services/planUpdates';
+
+test('Checklist: cập nhật theo lô, ghi chú giữ trạng thái và không cập nhật một phần khi có ngày tương lai', () => {
+ const context = { today: '2026-10-07', days: [{ date:'2026-10-07',label:'Thứ Tư',is_rest_day:true,nutrition:false,training:false }, { date:'2026-10-08',label:'Thứ Năm',is_rest_day:false,nutrition:false,training:false }] };
+ const current = { '2026-10-07':{nutrition:true,training:false} };
+ const next = applyCheckInUpdates(current,[{date:'2026-10-07',category:'nutrition',note:'Đã ăn đủ bữa.'},{date:'2026-10-07',category:'training',checked:true}],context);
+ expect(next['2026-10-07']).toEqual({nutrition:true,training:true,nutritionNote:'Đã ăn đủ bữa.'});
+ expect(current['2026-10-07']).toEqual({nutrition:true,training:false});
+ expect(() => applyCheckInUpdates(current,[{date:'2026-10-07',category:'training',checked:true},{date:'2026-10-08',category:'nutrition',checked:true}],context)).toThrow('tuần hiện tại');
+ expect(current['2026-10-07'].training).toBe(false);
+ expect(() => applyCheckInUpdates(current,[{date:'2026-10-07',category:'nutrition',note:'x'.repeat(241)}],context)).toThrow();
+});
+
+for (const mobile of [false,true]) test(`${mobile?'mobile':'desktop'}: chat sửa checklist, streak, ghi chú và gửi ảnh cho AI`, async ({page}) => {
+ test.setTimeout(60_000);
+ const errors:string[]=[];
+ page.on('pageerror',error=>errors.push(error.message));
+ await page.setViewportSize({width:mobile?390:1440,height:900});
+ await page.clock.install({time:new Date('2026-10-07T12:00:00+07:00')});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const plans=await createPlan(demoProfile);
+ const checkIns=starterCheckIns(new Date(2026,9,7));
+ await page.addInitScript(({profile,plans,checkIns})=>{
+  if(localStorage.getItem('bua-viet:v1:profile'))return;
+  for(const [key,value] of Object.entries({'profile':profile,'draft':profile,'plans':plans,'check-ins':checkIns,'streak-record':3,'selected-date':'2026-10-07','stage':'ready','screen':'plan'})) localStorage.setItem(`bua-viet:v1:${key}`,JSON.stringify({version:1,value}));
+ },{profile:demoProfile,plans,checkIns});
+ const requests:any[]=[];
+ await page.route('**/api/chat',async route=>{
+  const body=route.request().postDataJSON();requests.push(body);
+  const text=body.messages.at(-1).content;
+  let result:any={reply:'Phản hồi kiến thức, không thay đổi checklist.'};
+  if(text==='Đã xong cả hai mục hôm nay') result={reply:'Bạn đã giữ nhịp rất tốt!',plan_updates:[{date:'2026-10-07',category:'nutrition',checked:true,note:'Đã hoàn thành dinh dưỡng theo lời bạn xác nhận.'},{date:'2026-10-07',category:'training',checked:true,note:'Đã phục hồi đúng lịch.'}]};
+  if(text==='Bỏ tick phục hồi hôm nay, ghi chú chưa nghỉ đủ') result={reply:'Mình ghi nhận thông tin bạn sửa.',plan_updates:[{date:'2026-10-07',category:'training',checked:false,note:'Chưa nghỉ đủ.'}]};
+  if(text==='Sửa nội dung dinh dưỡng: đã ăn ba bữa') result={reply:'Mình ghi nhận ghi chú.',plan_updates:[{date:'2026-10-07',category:'nutrition',note:'Đã ăn ba bữa.'}]};
+  if(text==='Thử ngày tương lai') result={reply:'Cập nhật ngày mai.',plan_updates:[{date:'2026-10-08',category:'nutrition',checked:true}]};
+  if(body.messages.at(-1).image) result={reply:'Ước lượng từ ảnh/chưa kiểm chứng: 450–600 kcal; đạm 25–35 g, bột đường 50–70 g, béo 12–20 g. Cần xác nhận món và khẩu phần.'};
+  await route.fulfill({json:result});
+ });
+ await page.goto(mobile?'/mobile':'/');
+ if(mobile) await page.getByRole('button',{name:'Trò chuyện',exact:true}).click();
+ const chat=page.getByRole('complementary',{name:'Trò chuyện với trợ lý Vi'});
+ async function send(text:string){await chat.getByRole('textbox',{name:'Tin nhắn cho Vi'}).fill(text);await chat.getByRole('button',{name:'Gửi tin nhắn',exact:true}).click();}
+ await send('Đã xong cả hai mục hôm nay');
+ await expect(chat.getByText('Đã cập nhật checklist:',{exact:false})).toBeVisible();
+ if(mobile) await page.getByRole('button',{name:'Kế hoạch',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'4 ngày giữ lửa'})).toBeVisible();
+ await expect(page.getByRole('checkbox',{name:'Phục hồi Thứ Tư',exact:true})).toBeChecked();
+ if(mobile) await page.getByRole('button',{name:'Trò chuyện',exact:true}).click();
+ await send('Bỏ tick phục hồi hôm nay, ghi chú chưa nghỉ đủ');
+ await expect(chat.getByText('chưa hoàn thành',{exact:false})).toBeVisible();
+ await send('Sửa nội dung dinh dưỡng: đã ăn ba bữa');
+ await expect(chat.getByText('đã sửa ghi chú',{exact:false})).toBeVisible();
+ if(mobile) await page.getByRole('button',{name:'Kế hoạch',exact:true}).click();
+ await expect(page.getByRole('checkbox',{name:'Dinh dưỡng Thứ Tư',exact:true})).toBeChecked();
+ await expect(page.getByRole('checkbox',{name:'Phục hồi Thứ Tư',exact:true})).not.toBeChecked();
+ await expect(page.locator('.checkin-table')).toContainText('Chưa nghỉ đủ.');
+ await expect(page.locator('.checkin-table')).toContainText('Đã ăn ba bữa.');
+ await page.reload();
+ await expect(page.locator('.checkin-table')).toContainText('Đã ăn ba bữa.');
+ if(mobile) await page.getByRole('button',{name:'Trò chuyện',exact:true}).click();
+ await send('Thử ngày tương lai');
+ await expect(chat.getByRole('alert')).toContainText('tuần hiện tại');
+ await chat.getByRole('textbox',{name:'Tin nhắn cho Vi'}).fill('');
+ const encoded=await page.evaluate(()=>{const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;const ctx=canvas.getContext('2d')!;ctx.fillStyle='#eee';ctx.fillRect(0,0,64,64);return canvas.toDataURL('image/png').split(',')[1];});
+ await chat.locator('input[type=file]:not([capture])').setInputFiles({name:'meal.png',mimeType:'image/png',buffer:Buffer.from(encoded,'base64')});
+ await expect(chat.getByAltText('Ảnh món ăn chuẩn bị gửi')).toBeVisible();
+ await chat.getByRole('button',{name:'Gửi tin nhắn',exact:true}).click();
+ await expect(chat.getByText('Ước lượng từ ảnh/chưa kiểm chứng:',{exact:false})).toBeVisible();
+ expect(requests.at(-1).messages.at(-1).image).toMatch(/^data:image\/jpeg;base64,/);
+ expect(requests.at(-1).plan_context.today).toBe('2026-10-07');
+ expect(requests.at(-1).plan_context.days.find((day:any)=>day.date==='2026-10-07').training).toBe(false);
+ await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+ await page.screenshot({path:path.resolve(`../../.impeccable/review/chat-checklist-${mobile?'mobile':'desktop'}.png`)});
+ await send('Câu hỏi tiếp theo');
+ await expect(chat.getByText('Phản hồi kiến thức, không thay đổi checklist.')).toBeVisible();
+ expect(requests.at(-1).messages.every((message:any)=>message.image===undefined)).toBe(true);
+ if(mobile) await page.getByRole('button',{name:'Kế hoạch',exact:true}).click();
+ await expect(page.getByRole('checkbox',{name:'Phục hồi Thứ Tư',exact:true})).not.toBeChecked();
+ await expect(page.getByRole('checkbox',{name:'Dinh dưỡng Thứ Năm',exact:true})).not.toBeChecked();
+ await expect(page.getByRole('heading',{name:'3 ngày giữ lửa'})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ expect(errors).toEqual([]);
+});

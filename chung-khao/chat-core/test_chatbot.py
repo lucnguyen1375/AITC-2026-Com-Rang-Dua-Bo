@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import chatbot
-from app import app
+from app import app, MAX_CHAT_BODY_BYTES
 
 
 @pytest.fixture(autouse=True)
@@ -64,6 +64,7 @@ def test_responses_contract_and_history(client, monkeypatch):
     assert str(request.url) == "https://gateway.example/v1/responses"
     assert request.headers["authorization"] == "Bearer fake-test-key"
     assert payload["model"] == "test-model"
+    assert payload["reasoning"] == {"effort": "none"}
     assert payload["store"] is False and payload["stream"] is False
     assert payload["input"] == [*messages[:-1], {"role": "user", "content": "Tăng cơ."}]
     assert "Mifflin" in payload["instructions"]
@@ -86,7 +87,7 @@ def test_invalid_input(client, messages):
 
 def test_invalid_json_and_body_limit(client):
     assert client.post("/api/chat", content="{broken", headers={"Content-Type": "application/json"}).status_code == 400
-    response = client.post("/api/chat", json={"messages": [{"role": "user", "content": "x" * 140000}]})
+    response = client.post("/api/chat", json={"messages": [{"role": "user", "content": "x" * MAX_CHAT_BODY_BYTES}]})
     assert response.status_code == 413
 
 

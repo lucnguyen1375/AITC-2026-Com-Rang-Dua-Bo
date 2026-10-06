@@ -33,6 +33,11 @@
 .meal-alignment p{font-size:13px;line-height:1.8}
 .meal-alignment small{display:block;margin-top:10px}
 .plan-origin{padding:12px 0;font-size:13px;color:var(--blue)}
+.unmatched-foods:not(:empty){margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--orange-light);color:var(--orange-ink)}
+.unmatched-foods strong{font-size:14px}
+.unmatched-foods ul{margin:8px 0;padding-left:20px}
+.unmatched-foods p{font-size:12px;line-height:1.7}
+.unmatched-foods .secondary{min-height:42px;margin-top:10px}
 .food-credits{font-size:12px}
 .food-credits p{margin:8px 0}
 @media(max-width:600px){.suggested-foods{grid-template-columns:1fr;gap:26px}.suggested-food>.food-photo{aspect-ratio:16/10}.food-nutrition{gap:5px}.food-nutrition dt{font-size:11px}.food-nutrition dd{font-size:14px}.food-nutrition dd span{display:inline}}

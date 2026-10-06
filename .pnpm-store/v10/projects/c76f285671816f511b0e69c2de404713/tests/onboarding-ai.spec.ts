@@ -25,8 +25,11 @@ test('Desktop: UI do LLM sinh, chọn nhanh, trả lời tự do, sửa và th�
  await page.getByRole('textbox',{name:'Nhắn cho Vi',exact:true}).fill('Sửa cân nặng của mình thành 68 kg.');await page.getByRole('button',{name:'Gửi tin nhắn',exact:true}).click();
  await expect(page.getByText('25 tuổi · 68 kg · 170 cm · Tăng cơ',{exact:true})).toBeVisible();
  await page.reload();await expect(page.getByText('25 tuổi · 68 kg · 170 cm · Tăng cơ',{exact:true})).toBeVisible();
+ await page.getByText('Cách tính, giả định và nguồn',{exact:true}).click();await expect(page.getByText(/Mifflin–St Jeor ước lượng năng lượng nghỉ/)).toBeVisible();await page.getByText('Cách tính, giả định và nguồn',{exact:true}).click();
+ await expect(page.locator('.avatar-mount canvas')).toBeVisible();await page.evaluate(()=>document.fonts.ready);
  await page.evaluate(()=>{window.scrollTo(0,0);document.querySelector('.onboarding-ai-chat .chat-actions')?.scrollTo(0,0);});
  await page.screenshot({path:path.join(review,'desktop-agreement.png'),fullPage:false});
+ await page.screenshot({path:path.join(review,'desktop-agreement-full.png'),fullPage:true});
  await page.getByRole('button',{name:'Đồng ý kế hoạch',exact:true}).click();await expect(page.getByRole('heading',{name:'Kế hoạch của bạn'})).toBeVisible();
  await expect(page.locator('.onboarding-screen')).toHaveCount(0);expect(errors).toEqual([]);
 });
@@ -47,6 +50,7 @@ test('Gateway BTC thật: sinh textbox và trích hồ sơ để tạo đề xu�
  await page.setViewportSize({width:1440,height:1000});await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
  await page.getByRole('button',{name:'Bắt đầu với Vi'}).click();
  await expect(page.locator('.ai-question input,.ai-question textarea').first()).toBeVisible({timeout:55000});
+ await expect(page.locator('.avatar-mount canvas')).toBeVisible();
  await page.screenshot({path:path.join(review,'desktop-live-questions.png'),fullPage:false});
  await page.getByRole('textbox',{name:'Hoặc trả lời tự do'}).fill('Mình 25 tuổi, nặng 65 kg, cao 170 cm. Không cung cấp giới tính. Mục tiêu tăng cơ. Tập sức mạnh, cường độ vừa. Tập thứ Hai, thứ Tư và thứ Sáu lúc 18:00, mỗi buổi 60 phút. Những ngày khác nghỉ.');
  await page.getByRole('button',{name:'Gửi tin nhắn',exact:true}).click();

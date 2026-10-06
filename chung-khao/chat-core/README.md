@@ -1,9 +1,8 @@
 # Chatbot tư vấn dinh dưỡng
 
-Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi mô hình AI Thực Chiến; frontend HTML/CSS/JavaScript cung cấp một trang chat gọn, dùng được trên điện thoại.
 Ứng dụng thử nghiệm một chatbot tư vấn dinh dưỡng bằng tiếng Việt cho người tập luyện cường độ cao. Backend Python nhận hội thoại và gọi mô hình AI Thực Chiến. API `/api/chat` được đấu nối với giao diện React trong `chung-khao/tro-ly-dinh-duong`; `static/index.html` vẫn có thể dùng để chạy thử backend độc lập.
 
-Đây là công cụ tham khảo, không phải dịch vụ y tế. Ứng dụng hiện chỉ nhận văn bản; chưa phân tích ảnh món ăn hoặc ảnh cơ thể.
+Đây là công cụ tham khảo, không phải dịch vụ y tế. API chat có thể nhận ảnh món ăn để tư vấn; endpoint riêng phân tích ảnh trả về tên món và khối lượng tham khảo. Không phân tích ảnh cơ thể.
 
 ## Tính năng hiện có
 
@@ -16,7 +15,7 @@
 
 ## Cấu trúc mã
 
-- `app.py`: máy chủ FastAPI, kiểm tra dữ liệu yêu cầu, phục vụ trang chính và cung cấp `POST /api/chat`.
+- `app.py`: máy chủ FastAPI, kiểm tra dữ liệu yêu cầu, phục vụ trang chính và cung cấp `POST /api/chat` cùng `POST /api/analyze-meal`.
 - `chatbot.py`: đọc cấu hình môi trường, chứa chỉ dẫn dinh dưỡng/an toàn, gọi Responses API và trích nội dung phản hồi.
 - `static/index.html`: giao diện chat, prompt mẫu và biểu mẫu bổ sung thông tin. Nội dung phản hồi được hiển thị dưới dạng văn bản an toàn.
 - `requirements.txt`: các thư viện Python cần cài.
@@ -43,14 +42,13 @@ pnpm install
 pnpm dev
 ```
 
-Vite chuyển tiếp `/api/chat` tới FastAPI mà không đưa khóa API vào trình duyệt. Khi triển khai ngoài môi trường phát triển, cấu hình máy chủ web chuyển tiếp cùng đường dẫn tới FastAPI. Chat gửi lịch sử hội thoại và hồ sơ người dùng đã khai báo tới dịch vụ AI; ảnh chỉ lưu trên thiết bị và không được gửi tới API.
+Vite chuyển tiếp `/api/*` tới FastAPI mà không đưa khóa API vào trình duyệt. Khi triển khai, chuyển tiếp `/api/chat` và `/api/analyze-meal` tới FastAPI. Chat gửi hội thoại/hồ sơ đã khai báo tới dịch vụ AI. Khi người dùng chủ động bấm Phân tích ảnh, ảnh món ăn đã thu nhỏ được gửi qua backend tới nhà cung cấp AI; backend không lưu ảnh hoặc ghi ảnh/nội dung vào log. Không gửi ảnh cơ thể.
 
 Ứng dụng đọc `.env` ở thư mục gốc của repository, không phụ thuộc thư mục terminal. Cấu hình cần có:
 
 ```dotenv
 THUCCHIEN_API_KEY=<khóa API của đội>
 THUCCHIEN_BASE_URL=https://api.thucchien.ai/v1
-THUCCHIEN_MODEL=gpt-6-luna
 CHAT_PORT=3000
 ```
 
@@ -100,9 +98,13 @@ Ví dụ phần bổ sung khi gửi biểu mẫu:
 }
 ```
 
-API chỉ nhận vai trò `user` và `assistant`; tin nhắn cuối phải là `user`. Giới hạn mỗi tin nhắn người dùng là 4.000 ký tự, tối đa 80 tin nhắn và kích thước phần thân yêu cầu là 128 KB.
+API chỉ nhận vai trò `user` và `assistant`; tin nhắn cuối phải là `user`. Giới hạn mỗi tin nhắn người dùng là 4.000 ký tự, tối đa 80 tin nhắn và kích thước phần thân `/api/chat` là 2 MB; `/api/analyze-meal` nhận tối đa 768 KiB ảnh JPEG sau giải mã.
 
-Backend gọi `POST /v1/responses` với `store: false`, `stream: false`, thời gian chờ tổng cộng 45 giây. Backend đọc mọi phần `output_text` trong thông điệp trợ lý, không dựa vào vị trí cố định trong mảng `output`. Các lỗi xác thực, giới hạn lượt gọi, hết thời gian và lỗi mạng được chuyển thành thông báo tiếng Việt.
+Mọi lượt gọi AI (chat, onboarding, chat kèm ảnh và phân tích ảnh món ăn) dùng `gpt-6-luna` với `reasoning.effort: none` để ưu tiên tốc độ. Backend gọi `POST /v1/responses` với `store: false`, `stream: false`, thời gian chờ tổng cộng 45 giây. Backend đọc mọi phần `output_text` trong thông điệp trợ lý, không dựa vào vị trí cố định trong mảng `output`. Các lỗi xác thực, giới hạn lượt gọi, hết thời gian và lỗi mạng được chuyển thành thông báo tiếng Việt.
+
+### Phân tích ảnh món ăn
+
+`POST /api/analyze-meal` nhận JSON gồm `image_data_url` (JPEG base64, tối đa 768 KiB sau giải mã) và `description` tùy chọn. Phản hồi chứa `items` (`food_id`, `grams`) cùng `unknown_items`; backend kiểm tra ID, khẩu phần và kích thước ảnh. Endpoint chỉ gợi ý thành phần từ ảnh, không tự ghi nhật ký và không trả macro. Frontend tính macro theo bộ thực phẩm demo chưa kiểm chứng; người dùng phải rà soát/sửa kết quả rồi xác nhận đã ăn. Ảnh được gửi tới dịch vụ AI của nhà cung cấp, do đó việc xử lý/log vận hành của nhà cung cấp áp dụng theo chính sách riêng.
 
 ## Căn cứ và giới hạn tư vấn
 
@@ -120,7 +122,7 @@ Trong chỉ dẫn hiện tại, Mifflin–St Jeor được dùng để ước t�
 
 ## Quyền riêng tư
 
-Hội thoại chỉ nằm trong bộ nhớ của trang đang mở; tải lại trang hoặc chọn “Bắt đầu lại” sẽ xóa lịch sử ở trình duyệt. Backend không lưu phiên hội thoại. Nội dung người dùng vẫn được gửi tới dịch vụ AI Thực Chiến để tạo phản hồi; `store: false` không khẳng định nhà cung cấp không ghi log vận hành.
+Với giao diện React, lịch sử hội thoại lưu trong JSON có phiên bản ở localStorage; ảnh xem trước không được gửi tới backend. Ảnh món ăn chỉ được gửi khi người dùng chủ động phân tích. Backend không lưu phiên hội thoại. Nội dung và hồ sơ người dùng vẫn được gửi tới dịch vụ AI Thực Chiến để tạo phản hồi; `store: false` không khẳng định nhà cung cấp không ghi log vận hành. Trang HTML độc lập chỉ giữ lịch sử trong bộ nhớ của trang đang mở.
 
 ## Chạy kiểm tra backend
 
@@ -129,5 +131,10 @@ python -m pip install pytest
 python -m pytest -q
 ```
 
-Bộ kiểm tra hiện có dùng HTTP giả lập, không gọi mô hình thật. Các thay đổi gần đây về biểu mẫu frontend và phản hồi sau biểu mẫu cần được thử trên trình duyệt riêng.
-Với giao diện React, lịch sử hội thoại lưu trong JSON có phiên bản ở localStorage; ảnh xem trước không được gửi tới backend. Backend không lưu phiên hội thoại. Nội dung và hồ sơ người dùng vẫn được gửi tới dịch vụ AI Thực Chiến để tạo phản hồi; `store: false` không khẳng định nhà cung cấp không ghi log vận hành. Trang HTML độc lập chỉ giữ lịch sử trong bộ nhớ của trang đang mở.
+Bộ kiểm tra dùng HTTP giả lập, không gọi mô hình thật.
+
+## Onboarding AI trong ứng dụng React
+
+`POST /api/onboarding` là luồng thu thập hồ sơ nhiều lượt, riêng với chat tư vấn. LLM sinh câu hỏi, textbox và lựa chọn nhanh theo những trường còn thiếu. Backend kiểm tra schema UI, số đo, lịch đủ bảy ngày và giữ các trường đã khai qua các lượt. Chỉ hồ sơ đầy đủ, hợp lệ của người trưởng thành mới có `ready: true`; frontend vẫn cần người dùng đồng ý kế hoạch trước khi chuyển vào ứng dụng.
+
+Endpoint dùng cùng kết nối Responses API/Gateway BTC với chat, không có fallback bằng câu hỏi giả khi dịch vụ lỗi. Chi tiết sử dụng và kiểm thử: [ONBOARDING_AI.md](../tro-ly-dinh-duong/docs/ONBOARDING_AI.md). Kiểm tra hợp đồng bằng `python -m unittest test_onboarding -v`.

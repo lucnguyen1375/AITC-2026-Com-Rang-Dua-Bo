@@ -94,6 +94,23 @@ export async function imagePreview(file: File): Promise<string> {
  } finally { bitmap.close(); }
 }
 
+/** Build a compact JPEG payload for the meal-photo API without storing the original upload. */
+export async function mealPhotoForAnalysis(file: File): Promise<string> {
+ const bitmap = await createImageBitmap(file);
+ try {
+  const scale = Math.min(1, 720 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  for (const quality of [0.72, 0.6, 0.48, 0.38]) {
+   const dataUrl = canvas.toDataURL('image/jpeg', quality);
+   if (dataUrl.length <= 1_040_000) return dataUrl;
+  }
+  throw new Error('Ảnh quá lớn sau khi thu nhỏ. Hãy chọn ảnh khác hoặc nhập món bằng tay.');
+ } finally { bitmap.close(); }
+}
+
 export function previewFile(url: string): File {
  const [header, encoded] = url.split(',');
  const bytes = Uint8Array.from(atob(encoded), char => char.charCodeAt(0));

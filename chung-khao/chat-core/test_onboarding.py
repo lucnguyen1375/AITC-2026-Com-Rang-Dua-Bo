@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import AsyncMock, patch
 import httpx
 from app import app
-from onboarding import validate_turn
+from onboarding import validate_turn, CollectedProfile
 import chatbot
 
 def result(profile=None, questions=None):
@@ -25,9 +25,17 @@ class OnboardingTests(unittest.IsolatedAsyncioTestCase):
    with self.assertRaises(chatbot.ChatbotError):validate_turn(result({**PROFILE,'weekSchedule':week},[]))
  def test_underage_is_blocked(self):
   turn=validate_turn(result({**PROFILE,'age':17},[]));self.assertTrue(turn['blocked']);self.assertFalse(turn['ready']);self.assertEqual(turn['questions'],[])
+ def test_partial_model_update_preserves_prior_profile(self):
+  turn=validate_turn(result({'weightKg':68},[]),CollectedProfile.model_validate(PROFILE))
+  self.assertTrue(turn['ready']);self.assertEqual(turn['profile']['age'],25);self.assertEqual(turn['profile']['weightKg'],68)
  def test_invalid_ui_or_json_rejected(self):
   for raw in ['not json',result({},[{'field':'html','label':'x','input_type':'text','options':[]}])]:
    with self.assertRaises(chatbot.ChatbotError):validate_turn(raw)
+ def test_wrapped_json_and_missing_questions_keep_flow_moving(self):
+  raw='Vi sẽ hỏi tiếp nhé.\n```json\n'+json.dumps({'reply':'Mình hỏi thêm nhé.','profile':{},'questions':[]},ensure_ascii=False)+'\n```'
+  turn=validate_turn(raw)
+  self.assertEqual(turn['questions'][0]['field'],'age')
+  self.assertEqual(turn['questions'][0]['input_type'],'number')
  async def test_no_fake_fallback_on_failure(self):
   with patch.object(chatbot,'ask_assistant',AsyncMock(side_effect=chatbot.ChatbotError(504,'Chờ phản hồi quá lâu.'))):
    response=await self.post({'messages':[{'role':'user','content':'Bắt đầu'}]})

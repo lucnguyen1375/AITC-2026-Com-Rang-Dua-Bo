@@ -1,0 +1,519 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-06T11:25:18.931389+00:00",
+  "title": "Design System: Bữa Việt",
+  "extensions": {
+    "colorMeta": {
+      "blue": {
+        "role": "primary",
+        "displayName": "Cobalt",
+        "tonalRamp": [
+          "oklch(15% 0.2216 265.97)",
+          "oklch(25% 0.2216 265.97)",
+          "oklch(35% 0.2216 265.97)",
+          "oklch(45% 0.2216 265.97)",
+          "oklch(55% 0.2216 265.97)",
+          "oklch(65% 0.2216 265.97)",
+          "oklch(80% 0.2216 265.97)",
+          "oklch(95% 0.2216 265.97)"
+        ]
+      },
+      "blue-deep": {
+        "role": "primary",
+        "displayName": "Deep Cobalt",
+        "tonalRamp": [
+          "oklch(15% 0.1929 265.69)",
+          "oklch(25% 0.1929 265.69)",
+          "oklch(35% 0.1929 265.69)",
+          "oklch(45% 0.1929 265.69)",
+          "oklch(55% 0.1929 265.69)",
+          "oklch(65% 0.1929 265.69)",
+          "oklch(80% 0.1929 265.69)",
+          "oklch(95% 0.1929 265.69)"
+        ]
+      },
+      "blue-light": {
+        "role": "primary",
+        "displayName": "Cobalt Tint",
+        "tonalRamp": [
+          "oklch(15% 0.0193 273.24)",
+          "oklch(25% 0.0193 273.24)",
+          "oklch(35% 0.0193 273.24)",
+          "oklch(45% 0.0193 273.24)",
+          "oklch(55% 0.0193 273.24)",
+          "oklch(65% 0.0193 273.24)",
+          "oklch(80% 0.0193 273.24)",
+          "oklch(95% 0.0193 273.24)"
+        ]
+      },
+      "orange": {
+        "role": "secondary",
+        "displayName": "Energy Orange",
+        "tonalRamp": [
+          "oklch(15% 0.1601 45.08)",
+          "oklch(25% 0.1601 45.08)",
+          "oklch(35% 0.1601 45.08)",
+          "oklch(45% 0.1601 45.08)",
+          "oklch(55% 0.1601 45.08)",
+          "oklch(65% 0.1601 45.08)",
+          "oklch(80% 0.1601 45.08)",
+          "oklch(95% 0.1601 45.08)"
+        ]
+      },
+      "orange-ink": {
+        "role": "secondary",
+        "displayName": "Orange Ink",
+        "tonalRamp": [
+          "oklch(15% 0.1339 41.87)",
+          "oklch(25% 0.1339 41.87)",
+          "oklch(35% 0.1339 41.87)",
+          "oklch(45% 0.1339 41.87)",
+          "oklch(55% 0.1339 41.87)",
+          "oklch(65% 0.1339 41.87)",
+          "oklch(80% 0.1339 41.87)",
+          "oklch(95% 0.1339 41.87)"
+        ]
+      },
+      "orange-light": {
+        "role": "secondary",
+        "displayName": "Orange Wash",
+        "tonalRamp": [
+          "oklch(15% 0.0211 56.13)",
+          "oklch(25% 0.0211 56.13)",
+          "oklch(35% 0.0211 56.13)",
+          "oklch(45% 0.0211 56.13)",
+          "oklch(55% 0.0211 56.13)",
+          "oklch(65% 0.0211 56.13)",
+          "oklch(80% 0.0211 56.13)",
+          "oklch(95% 0.0211 56.13)"
+        ]
+      },
+      "green": {
+        "role": "tertiary",
+        "displayName": "Success Green",
+        "tonalRamp": [
+          "oklch(15% 0.0963 163.14)",
+          "oklch(25% 0.0963 163.14)",
+          "oklch(35% 0.0963 163.14)",
+          "oklch(45% 0.0963 163.14)",
+          "oklch(55% 0.0963 163.14)",
+          "oklch(65% 0.0963 163.14)",
+          "oklch(80% 0.0963 163.14)",
+          "oklch(95% 0.0963 163.14)"
+        ]
+      },
+      "green-light": {
+        "role": "tertiary",
+        "displayName": "Success Wash",
+        "tonalRamp": [
+          "oklch(15% 0.0157 160.62)",
+          "oklch(25% 0.0157 160.62)",
+          "oklch(35% 0.0157 160.62)",
+          "oklch(45% 0.0157 160.62)",
+          "oklch(55% 0.0157 160.62)",
+          "oklch(65% 0.0157 160.62)",
+          "oklch(80% 0.0157 160.62)",
+          "oklch(95% 0.0157 160.62)"
+        ]
+      },
+      "error": {
+        "role": "tertiary",
+        "displayName": "Error Red",
+        "tonalRamp": [
+          "oklch(15% 0.1736 24.59)",
+          "oklch(25% 0.1736 24.59)",
+          "oklch(35% 0.1736 24.59)",
+          "oklch(45% 0.1736 24.59)",
+          "oklch(55% 0.1736 24.59)",
+          "oklch(65% 0.1736 24.59)",
+          "oklch(80% 0.1736 24.59)",
+          "oklch(95% 0.1736 24.59)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Training Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0485 263.22)",
+          "oklch(25% 0.0485 263.22)",
+          "oklch(35% 0.0485 263.22)",
+          "oklch(45% 0.0485 263.22)",
+          "oklch(55% 0.0485 263.22)",
+          "oklch(65% 0.0485 263.22)",
+          "oklch(80% 0.0485 263.22)",
+          "oklch(95% 0.0485 263.22)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "tonalRamp": [
+          "oklch(15% 0.0399 265.71)",
+          "oklch(25% 0.0399 265.71)",
+          "oklch(35% 0.0399 265.71)",
+          "oklch(45% 0.0399 265.71)",
+          "oklch(55% 0.0399 265.71)",
+          "oklch(65% 0.0399 265.71)",
+          "oklch(80% 0.0399 265.71)",
+          "oklch(95% 0.0399 265.71)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Cool Ground",
+        "tonalRamp": [
+          "oklch(15% 0.0057 264.53)",
+          "oklch(25% 0.0057 264.53)",
+          "oklch(35% 0.0057 264.53)",
+          "oklch(45% 0.0057 264.53)",
+          "oklch(55% 0.0057 264.53)",
+          "oklch(65% 0.0057 264.53)",
+          "oklch(80% 0.0057 264.53)",
+          "oklch(95% 0.0057 264.53)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "tonalRamp": [
+          "oklch(15% 0.0000 0.00)",
+          "oklch(25% 0.0000 0.00)",
+          "oklch(35% 0.0000 0.00)",
+          "oklch(45% 0.0000 0.00)",
+          "oklch(55% 0.0000 0.00)",
+          "oklch(65% 0.0000 0.00)",
+          "oklch(80% 0.0000 0.00)",
+          "oklch(95% 0.0000 0.00)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Divider",
+        "tonalRamp": [
+          "oklch(15% 0.0133 262.38)",
+          "oklch(25% 0.0133 262.38)",
+          "oklch(35% 0.0133 262.38)",
+          "oklch(45% 0.0133 262.38)",
+          "oklch(55% 0.0133 262.38)",
+          "oklch(65% 0.0133 262.38)",
+          "oklch(80% 0.0133 262.38)",
+          "oklch(95% 0.0133 262.38)"
+        ]
+      },
+      "coach-stage": {
+        "role": "neutral",
+        "displayName": "Coach Stage",
+        "tonalRamp": [
+          "oklch(15% 0.0225 269.44)",
+          "oklch(25% 0.0225 269.44)",
+          "oklch(35% 0.0225 269.44)",
+          "oklch(45% 0.0225 269.44)",
+          "oklch(55% 0.0225 269.44)",
+          "oklch(65% 0.0225 269.44)",
+          "oklch(80% 0.0225 269.44)",
+          "oklch(95% 0.0225 269.44)"
+        ]
+      },
+      "assistant-bubble": {
+        "role": "neutral",
+        "displayName": "Assistant Bubble",
+        "tonalRamp": [
+          "oklch(15% 0.0086 264.52)",
+          "oklch(25% 0.0086 264.52)",
+          "oklch(35% 0.0086 264.52)",
+          "oklch(45% 0.0086 264.52)",
+          "oklch(55% 0.0086 264.52)",
+          "oklch(65% 0.0086 264.52)",
+          "oklch(80% 0.0086 264.52)",
+          "oklch(95% 0.0086 264.52)"
+        ]
+      },
+      "chat-note": {
+        "role": "neutral",
+        "displayName": "Chat Note",
+        "tonalRamp": [
+          "oklch(15% 0.0054 274.97)",
+          "oklch(25% 0.0054 274.97)",
+          "oklch(35% 0.0054 274.97)",
+          "oklch(45% 0.0054 274.97)",
+          "oklch(55% 0.0054 274.97)",
+          "oklch(65% 0.0054 274.97)",
+          "oklch(80% 0.0054 274.97)",
+          "oklch(95% 0.0054 274.97)"
+        ]
+      },
+      "field-line": {
+        "role": "neutral",
+        "displayName": "Field Line",
+        "tonalRamp": [
+          "oklch(15% 0.0225 263.18)",
+          "oklch(25% 0.0225 263.18)",
+          "oklch(35% 0.0225 263.18)",
+          "oklch(45% 0.0225 263.18)",
+          "oklch(55% 0.0225 263.18)",
+          "oklch(65% 0.0225 263.18)",
+          "oklch(80% 0.0225 263.18)",
+          "oklch(95% 0.0225 263.18)"
+        ]
+      },
+      "option-line": {
+        "role": "neutral",
+        "displayName": "Option Line",
+        "tonalRamp": [
+          "oklch(15% 0.0554 269.27)",
+          "oklch(25% 0.0554 269.27)",
+          "oklch(35% 0.0554 269.27)",
+          "oklch(45% 0.0554 269.27)",
+          "oklch(55% 0.0554 269.27)",
+          "oklch(65% 0.0554 269.27)",
+          "oklch(80% 0.0554 269.27)",
+          "oklch(95% 0.0554 269.27)"
+        ]
+      },
+      "composer-line": {
+        "role": "neutral",
+        "displayName": "Composer Line",
+        "tonalRamp": [
+          "oklch(15% 0.0267 264.43)",
+          "oklch(25% 0.0267 264.43)",
+          "oklch(35% 0.0267 264.43)",
+          "oklch(45% 0.0267 264.43)",
+          "oklch(55% 0.0267 264.43)",
+          "oklch(65% 0.0267 264.43)",
+          "oklch(80% 0.0267 264.43)",
+          "oklch(95% 0.0267 264.43)"
+        ]
+      },
+      "progress-ground": {
+        "role": "neutral",
+        "displayName": "Progress Ground",
+        "tonalRamp": [
+          "oklch(15% 0.0133 262.38)",
+          "oklch(25% 0.0133 262.38)",
+          "oklch(35% 0.0133 262.38)",
+          "oklch(45% 0.0133 262.38)",
+          "oklch(55% 0.0133 262.38)",
+          "oklch(65% 0.0133 262.38)",
+          "oklch(80% 0.0133 262.38)",
+          "oklch(95% 0.0133 262.38)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "General page headings."
+      },
+      "onboarding-display": {
+        "displayName": "Onboarding Display",
+        "purpose": "The standalone desktop welcome."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Compact subheadings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base Vietnamese interface copy."
+      },
+      "conversation": {
+        "displayName": "Conversation",
+        "purpose": "Onboarding messages with an open reading rhythm."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field and supporting labels."
+      },
+      "action": {
+        "displayName": "Action",
+        "purpose": "Common primary and secondary controls."
+      },
+      "ai-question": {
+        "displayName": "AI Question",
+        "purpose": "Generated question legends."
+      },
+      "ai-field": {
+        "displayName": "AI Field",
+        "purpose": "Generated answer entry."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "The root easing used by common control and progress transitions."
+      },
+      {
+        "name": "control-transition",
+        "value": "200ms",
+        "purpose": "Source background, transform, and field-border transitions; desktop surface button transforms are overridden."
+      },
+      {
+        "name": "progress-transition",
+        "value": "600ms",
+        "purpose": "Nutrition progress transform transition."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "large-desktop",
+        "value": "1600px",
+        "purpose": "Wider workspace columns and assistant regions."
+      },
+      {
+        "name": "compact-desktop-upper",
+        "value": "1180px",
+        "purpose": "Upper boundary of the compact desktop workspace rule."
+      },
+      {
+        "name": "compact-desktop-lower",
+        "value": "901px",
+        "purpose": "Lower boundary of the compact desktop workspace rule."
+      }
+    ],
+    "focus": {
+      "value": "outline:3px solid var(--blue);outline-offset:4px",
+      "purpose": "Global keyboard focus, with composer textarea focus expressed on its container."
+    },
+    "sourceScope": {
+      "files": [
+        "src/styles.css",
+        "src/workspace.css",
+        "src/onboarding.css",
+        "src/features/profile/OnboardingScreen.tsx",
+        "src/components/OnboardingAssistant.tsx",
+        "src/components/CoachAvatar.tsx",
+        "src/components/AssistantChat.tsx"
+      ],
+      "review": "Desktop source extraction; live BTC Gateway requests currently return HTTP400 and successful AI runtime is not verified. Smaller-screen behavior was outside this pass.",
+      "tonalRamps": "Preview-only OKLCH ramps synthesized from extracted source hex values; frontmatter colors remain normative."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Cobalt next action with a darker hover.",
+      "html": "<button class=\"ds-primary\">Gửi câu trả lời<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"17\" height=\"17\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-primary{font-family:'Be Vietnam Pro',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.65;cursor:pointer;transition:background .2s var(--ease,cubic-bezier(.16,1,.3,1));background:var(--blue,#2349d8);color:var(--white,#fff);border:1px solid transparent}.ds-primary:hover:not(:disabled){background:var(--blue-deep,#1737af)}.ds-primary:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}.ds-primary:active:not(:disabled){background:var(--blue-deep,#1737af)}.ds-primary:disabled{cursor:not-allowed;opacity:.55}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Bordered supporting action, including retry.",
+      "html": "<button class=\"ds-secondary\">Thử lại</button>",
+      "css": ".ds-secondary{font-family:'Be Vietnam Pro',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.65;cursor:pointer;transition:background .2s var(--ease,cubic-bezier(.16,1,.3,1));background:var(--white,#fff);color:var(--ink,#17233b);border:1px solid var(--line,#e1e6ef)}.ds-secondary:hover:not(:disabled){border-color:var(--blue,#2349d8);background:var(--blue-light,#edf1ff)}.ds-secondary:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}.ds-secondary:disabled{cursor:not-allowed;opacity:.55}"
+    },
+    {
+      "name": "Text Action",
+      "kind": "button",
+      "description": "Quiet reset or secondary text action.",
+      "html": "<button class=\"ds-text-action\">Bắt đầu lại</button>",
+      "css": ".ds-text-action{font-family:'Be Vietnam Pro',sans-serif;display:inline-flex;align-items:center;min-height:44px;padding:8px 0;border:0;background:none;color:var(--blue,#2349d8);font-size:12px;font-weight:600;line-height:1.65;cursor:pointer;text-align:left}.ds-text-action:hover{text-decoration:underline;text-underline-offset:4px}.ds-text-action:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}"
+    },
+    {
+      "name": "Generated Answer Field",
+      "kind": "input",
+      "refersTo": "input-ai",
+      "description": "Readable entry for an AI-generated question.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-answer\">Bạn thường tập vào lúc nào?</label><input class=\"ds-answer\" id=\"ds-answer\" placeholder=\"Ví dụ: 18 giờ sau giờ làm\"/>",
+      "css": ".ds-field-label{font-family:'Be Vietnam Pro',sans-serif;display:block;font-size:15px;font-weight:600;line-height:1.7;margin-bottom:12px;color:var(--ink,#17233b)}.ds-answer{font-family:'Be Vietnam Pro',sans-serif;width:100%;min-height:48px;border:1px solid #cdd5e4;border-radius:9px;padding:11px 12px;background:var(--white,#fff);color:var(--ink,#17233b);font-size:15px;line-height:1.65;caret-color:var(--blue,#2349d8);transition:border-color .2s}.ds-answer::placeholder{color:#737e95}.ds-answer:hover{border-color:#8b9ac1}.ds-answer:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}.ds-answer[aria-invalid=true]{border-color:var(--error,#b82f32)}"
+    },
+    {
+      "name": "Active Desktop Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Cobalt-tinted icon-and-label sidebar destination.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item\" aria-current=\"page\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M16 3v4M8 3v4M3 11h18\"/></svg><span>Kế hoạch</span></button></nav>",
+      "css": ".ds-nav{width:74px}.ds-nav-item{font-family:'Be Vietnam Pro',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;min-height:69px;padding:10px 4px;border:0;border-radius:12px;background:var(--blue-light,#edf1ff);color:var(--blue,#2349d8);font-size:11px;font-weight:500;line-height:1.65;cursor:pointer}.ds-nav-item:hover{background:var(--blue-light,#edf1ff)}.ds-nav-item:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}"
+    },
+    {
+      "name": "Information Pill",
+      "kind": "chip",
+      "refersTo": "pill",
+      "description": "Small cobalt information label.",
+      "html": "<span class=\"ds-pill\">Ngày tập</span>",
+      "css": ".ds-pill{font-family:'Be Vietnam Pro',sans-serif;display:inline-flex;align-items:center;white-space:nowrap;background:var(--blue-light,#edf1ff);color:var(--blue,#2349d8);padding:5px 11px;border-radius:99px;font-size:11px;font-weight:500;line-height:1.65}"
+    },
+    {
+      "name": "Working Card",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat white bordered profile surface.",
+      "html": "<section class=\"ds-card\"><h2>Hồ sơ của bạn</h2><p>Thông tin có thể điều chỉnh trước khi thống nhất kế hoạch.</p></section>",
+      "css": ".ds-card{font-family:'Be Vietnam Pro',sans-serif;background:var(--white,#fff);color:var(--ink,#17233b);border:1px solid var(--line,#e1e6ef);border-radius:var(--radius,16px);padding:24px}.ds-card h2{margin:0;font-size:18px;font-weight:700;line-height:1.35;letter-spacing:-.025em}.ds-card p{margin:6px 0 0;color:var(--muted,#657088);font-size:12px;line-height:1.65}"
+    },
+    {
+      "name": "Onboarding Quick Options",
+      "kind": "chip",
+      "refersTo": "onboarding-option",
+      "description": "Wrap-friendly answers with a filled selected state.",
+      "html": "<div class=\"ds-options\"><button class=\"ds-option\" aria-pressed=\"false\">Tăng sức mạnh</button><button class=\"ds-option\" aria-pressed=\"true\">Giữ thể lực</button></div>",
+      "css": ".ds-options{display:flex;flex-wrap:wrap;gap:9px}.ds-option{font-family:'Be Vietnam Pro',sans-serif;display:inline-flex;align-items:center;justify-content:flex-start;min-height:46px;padding:11px 17px;border:1px solid #bccaf0;border-radius:8px;background:var(--white,#fff);color:var(--blue,#2349d8);font-size:14px;line-height:1.5;cursor:pointer}.ds-option:hover{background:var(--blue-light,#edf1ff);border-color:var(--blue,#2349d8)}.ds-option[aria-pressed=true]{background:var(--blue,#2349d8);color:var(--white,#fff);border-color:var(--blue,#2349d8)}.ds-option:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}"
+    },
+    {
+      "name": "Conversation Bubbles",
+      "kind": "custom",
+      "refersTo": "conversation-assistant",
+      "description": "Asymmetric light assistant and cobalt user messages.",
+      "html": "<div class=\"ds-conversation\"><div class=\"ds-message\"><span class=\"ds-message-avatar\">Vi</span><p class=\"ds-message-body\">Bạn có thể chọn nhanh hoặc trả lời theo cách của mình.</p></div><div class=\"ds-message ds-user\"><p class=\"ds-message-body\">Mình tập vào buổi chiều.</p></div></div>",
+      "css": ".ds-conversation{font-family:'Be Vietnam Pro',sans-serif;color:var(--ink,#17233b)}.ds-message{display:flex;gap:8px;align-items:flex-start;margin-bottom:19px}.ds-message-avatar{flex-shrink:0;width:25px;height:25px;border-radius:8px;background:var(--blue-light,#edf1ff);color:var(--blue,#2349d8);font-size:10px;font-weight:700;display:grid;place-items:center;margin-top:5px}.ds-message-body{margin:0;background:#f1f4fa;padding:13px 14px;border-radius:0 13px 13px 13px;max-width:calc(100% - 33px);font-size:14px;line-height:1.85;overflow-wrap:anywhere}.ds-user{justify-content:flex-end}.ds-user .ds-message-body{background:var(--blue,#2349d8);color:var(--white,#fff);border-radius:13px 0 13px 13px}"
+    },
+    {
+      "name": "Proposal Before Agreement",
+      "kind": "custom",
+      "description": "Uncapped proposal flow keeps the source and assumption disclosure before approval.",
+      "html": "<section class=\"ds-proposal\"><div class=\"ds-proposal-content\"><h3>K? ho?ch ?? b?n th?ng nh?t</h3><p>?? xu?t s? b?, kh?ng ph?i ch? ??nh cho c? nh?n.</p><details><summary>C?ch t?nh, gi? ??nh v? ngu?n</summary><p>Mifflin?St Jeor ??c l??ng n?ng l??ng ngh?; nh?n h? s? v?n ??ng gi? ??nh. D? li?u th?c ph?m ch?a ki?m ch?ng.</p></details><p class=\"ds-proposal-note\">??ng ? ?? v?o k? ho?ch v? nh?t k?. B?n v?n c? th? ch?nh l?i sau; d? li?u ???c l?u tr?n thi?t b?.</p></div><div class=\"ds-proposal-agreement\"><button class=\"ds-proposal-approve\">??ng ? k? ho?ch</button><p>Mu?n thay ??i? Nh?n Vi b?n d??i ?? ?i?u ch?nh tr??c khi ??ng ?.</p></div></section>",
+      "css": ".ds-proposal{font-family:'Be Vietnam Pro',sans-serif;color:var(--ink,#17233b);background:var(--white,#fff);border:1px solid var(--line,#e1e6ef);border-radius:18px;overflow:hidden}.ds-proposal-content{max-height:none;overflow:visible;padding:12px 24px 15px}.ds-proposal h3{margin:0;font-size:17px;font-weight:600;line-height:1.35;letter-spacing:-.02em}.ds-proposal-content>p{font-size:12px;color:var(--muted,#657088);line-height:1.85;margin:12px 0 0}.ds-proposal details{margin-top:18px;font-size:12px;color:var(--muted,#657088);line-height:1.65}.ds-proposal summary{cursor:pointer;font-weight:600;color:var(--ink,#17233b);padding:4px 0}.ds-proposal summary:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}.ds-proposal details p{margin:12px 0 0;line-height:1.85}.ds-proposal-content>.ds-proposal-note{color:var(--orange-ink,#993d12);background:var(--orange-light,#fff0e6);padding:12px;border-radius:8px;margin-bottom:8px}.ds-proposal-agreement{padding:15px 24px;background:var(--blue-light,#edf1ff);border-top:1px solid var(--line,#e1e6ef)}.ds-proposal-agreement p{font-size:12px;color:var(--muted,#657088);margin:10px 0 0;line-height:1.8}.ds-proposal-approve{font-family:'Be Vietnam Pro',sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 20px;border:1px solid transparent;border-radius:10px;background:var(--blue,#2349d8);color:var(--white,#fff);font-size:13px;font-weight:600;line-height:1.65;cursor:pointer;transition:background .2s var(--ease,cubic-bezier(.16,1,.3,1))}.ds-proposal-approve:hover{background:var(--blue-deep,#1737af)}.ds-proposal-approve:focus-visible{outline:3px solid var(--blue,#2349d8);outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Sân tập hiện đại",
+    "overview": "Bữa Việt is a bright, confident training companion for Vietnamese adults. Cobalt establishes the identity and the next action; orange adds energy to training and nutrition markers. White working surfaces, dark ink, compact Vietnamese headings, and clear numerical measures keep practical tasks readable.\n\nThe system pairs flat, bordered interface surfaces with Vi, a rounded 3D sports companion wearing the same cobalt, orange, and white identity. The character brings warmth and physical depth without making the surrounding interface glossy or ornamental. The confirmed user direction is sporty, bold, and bright.",
+    "keyCharacteristics": [
+      "Cobalt actions and selected states, orange energy markers, white working surfaces.",
+      "Be Vietnam Pro throughout, with heavy compact headings and readable Vietnamese text.",
+      "Flat border-led panels with softly rounded corners.",
+      "A sporty 3D companion with controllable motion.",
+      "Clear conversational questions, editable answers, and an explicit agreement action."
+    ],
+    "rules": [
+      {
+        "name": "The Cobalt Action Rule",
+        "body": "Keep primary actions and selected states cobalt. Orange supports energy and context; the shipped primary action is cobalt.",
+        "section": "colors"
+      },
+      {
+        "name": "The Vietnamese Voice Rule",
+        "body": "Keep Be Vietnam Pro throughout the interface and retain Vietnamese diacritics in display text, labels, and data.",
+        "section": "typography"
+      },
+      {
+        "name": "The Border-Led Surface Rule",
+        "body": "Use borders and tonal layering for interface depth; preserve the rounded 3D character as the physical focal point.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use cobalt for the next action and selected states.",
+      "Do keep Vietnamese text in Be Vietnam Pro, with a bold heading hierarchy.",
+      "Do separate working surfaces with borders, tonal fills, and whitespace.",
+      "Do preserve editable answers, visible error copy, and the full proposal with source/assumption disclosure before the explicit agreement action.",
+      "Do expose pause controls and honor reduced motion for the 3D companion."
+    ],
+    "donts": [
+      "Don't replace the confirmed cobalt, orange, and white sports identity with another app's visual system.",
+      "Don't introduce card shadows as a new default in this flat interface.",
+      "Don't treat orange energy markers as the canonical primary action color.",
+      "Don't place source/assumption disclosure after the agreement action or constrain the proposal to an inner scrolling region.",
+      "Don't present a source-code review of the AI conversation as proof of a successful live service response."
+    ]
+  }
+}

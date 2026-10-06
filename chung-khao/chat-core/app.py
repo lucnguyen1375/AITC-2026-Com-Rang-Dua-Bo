@@ -2,6 +2,7 @@
 
 import os
 import base64
+import binascii
 import json
 import re
 from pathlib import Path
@@ -17,8 +18,6 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 import chatbot
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
-HTML_FILE = Path(__file__).resolve().parent / "static" / "index.html"
-MAX_BODY_BYTES = 128 * 1024
 from onboarding import router as onboarding_router
 from plan_actions import PlanContext, PlanUpdate, PLAN_INSTRUCTIONS, VISION_INSTRUCTIONS, extract_plan_updates
 
@@ -27,6 +26,8 @@ app.include_router(onboarding_router)
 HTML_FILE = Path(__file__).resolve().parent / "static" / "index.html"
 MAX_BODY_BYTES = 128 * 1024
 MAX_CHAT_BODY_BYTES = 2 * 1024 * 1024
+MAX_MEAL_PHOTO_BODY_BYTES = 1_100_000
+MAX_MEAL_PHOTO_BYTES = 768 * 1024
 
 
 class Message(BaseModel):
@@ -113,15 +114,40 @@ class ChatResponse(BaseModel):
     profile_request: list[Literal["age", "sex", "height", "weight", "goal", "training_type", "intensity", "sessions", "schedule"]] | None = None
 
 
+class MealPhotoRequest(BaseModel):
+    image_data_url: str = Field(min_length=30, max_length=1_050_000)
+    description: str = Field(default="", max_length=1500)
+
+    @field_validator("image_data_url")
+    @classmethod
+    def validate_image(cls, value: str) -> str:
+        match = re.fullmatch(r"data:image/jpeg;base64,([A-Za-z0-9+/=]+)", value)
+        if not match:
+            raise ValueError("Chỉ nhận ảnh JPEG đã thu nhỏ.")
+        try:
+            image = base64.b64decode(match.group(1), validate=True)
+        except (binascii.Error, ValueError):
+            raise ValueError("Ảnh không hợp lệ.") from None
+        if not image.startswith(b"\xff\xd8\xff") or len(image) > MAX_MEAL_PHOTO_BYTES:
+            raise ValueError("Ảnh không hợp lệ hoặc quá lớn.")
+        return value
+
+
+class MealIngredientEstimate(BaseModel):
+    food_id: Literal["rice", "chicken", "beef", "egg", "fish", "tofu", "vegetable", "banana", "milk", "sweetpotato", "peanut", "oil"]
+    grams: int = Field(ge=1, le=3000)
+
+
+class MealPhotoResponse(BaseModel):
+    items: list[MealIngredientEstimate] = Field(max_length=20)
+    unknown_items: list[str] = Field(max_length=12)
+
+
 @app.middleware("http")
 async def response_headers_and_body_limit(request: Request, call_next):
-    if request.method == "POST" and request.url.path == "/api/chat":
+    if request.method == "POST" and request.url.path in {"/api/chat", "/api/onboarding", "/api/analyze-meal"}:
         body = await request.body()
-        if len(body) > MAX_BODY_BYTES:
-            return JSONResponse(status_code=413, content={"error": "Hội thoại quá dài. Bạn hãy bắt đầu lại."}, headers={"Cache-Control": "no-store"})
-    if request.method == "POST" and request.url.path in {"/api/chat", "/api/onboarding"}:
-        body = await request.body()
-        limit = MAX_CHAT_BODY_BYTES if request.url.path == "/api/chat" else MAX_BODY_BYTES
+        limit = MAX_MEAL_PHOTO_BODY_BYTES if request.url.path == "/api/analyze-meal" else MAX_CHAT_BODY_BYTES if request.url.path == "/api/chat" else MAX_BODY_BYTES
         if len(body) > limit:
             return JSONResponse(status_code=413, content={"error": "Hội thoại hoặc ảnh quá lớn. Hãy giảm kích thước ảnh hoặc rút gọn nội dung."}, headers={"Cache-Control": "no-store"})
     response = await call_next(request)
@@ -161,7 +187,6 @@ async def chat(payload: ChatRequest, request: Request):
         if origin_host != request.headers.get("host"):
             raise HTTPException(403, "Nguồn yêu cầu không hợp lệ.")
     try:
-        messages = [message.model_dump() for message in payload.messages]
         messages = [message.model_dump(exclude_none=True) for message in payload.messages]
         profile_completion = payload.profile_answers is not None
         if payload.profile_answers:
@@ -180,8 +205,6 @@ async def chat(payload: ChatRequest, request: Request):
             answers = payload.profile_answers.model_dump(exclude_none=True)
             details = "\n".join(f"- {labels[key]}: {value}" for key, value in answers.items())
             messages[-1]["content"] = "Thông tin bổ sung từ biểu mẫu (người dùng tự khai):\n" + details
-        reply = await chatbot.ask_assistant(messages, profile_completion=profile_completion)
-        reply, requested_fields = chatbot.extract_profile_request(reply)
         instructions = chatbot.INSTRUCTIONS.replace("Phiên bản này chỉ nhận văn bản, chưa phân tích ảnh.", "") + VISION_INSTRUCTIONS
         if profile_completion:
             instructions += chatbot.PROFILE_COMPLETION_INSTRUCTIONS
@@ -201,8 +224,27 @@ async def chat(payload: ChatRequest, request: Request):
         return JSONResponse(status_code=502, content={"error": "Dịch vụ chưa thể trả lời. Bạn hãy thử lại."})
     if profile_completion:
         requested_fields = []
-    return ChatResponse(reply=reply, profile_request=requested_fields or None)
     return ChatResponse(reply=reply, profile_request=requested_fields or None, plan_updates=updates or None)
+
+
+@app.post("/api/analyze-meal", response_model=MealPhotoResponse)
+async def analyze_meal(payload: MealPhotoRequest, request: Request):
+    origin = request.headers.get("origin")
+    if origin:
+        try:
+            origin_host = urlsplit(origin).netloc
+        except ValueError:
+            raise HTTPException(403, "Nguồn yêu cầu không hợp lệ.") from None
+        if origin_host != request.headers.get("host"):
+            raise HTTPException(403, "Nguồn yêu cầu không hợp lệ.") from None
+    try:
+        estimate = await chatbot.analyze_meal_photo(payload.image_data_url, payload.description)
+    except chatbot.ChatbotError as error:
+        return JSONResponse(status_code=error.status_code, content={"error": error.message}, headers={"Cache-Control": "no-store"})
+    except Exception:
+        # Không đưa ảnh, nội dung người dùng hoặc cấu hình ra ngoài.
+        return JSONResponse(status_code=502, content={"error": "Dịch vụ chưa thể phân tích ảnh. Bạn hãy thử lại."}, headers={"Cache-Control": "no-store"})
+    return MealPhotoResponse.model_validate(estimate)
 
 
 if __name__ == "__main__":

@@ -25,6 +25,9 @@ export default function App({mobile = false}:{mobile?:boolean}){
  function navigateMobile(destination:MobileDestination){if(destination==='chat'){setMobileChat(true);setToast('');}else{navigate(destination);}}
  const [screen,setScreen]=useJsonState<Screen>('screen','plan',value=>['plan','meal','profile'].includes(String(value))); const [profile,setProfile]=useJsonState<UserProfile | undefined>('profile',undefined,validProfile); const [plans,setPlans]=useJsonState<DailyPlan[]>('plans',[],validPlans); const [entries,setEntries]=useJsonState<MealEntry[]>('entries',[],validEntries); const [selectedDate,setSelectedDate]=useJsonState('selected-date',dateKey(new Date()),value=>typeof value==='string' && weekDates().some(date=>dateKey(date)===value)); const [toast,setToast]=useState('');
  const [checkIns,setCheckIns]=useJsonState<CheckIns>('check-ins',{},validCheckIns); const [celebration,setCelebration]=useState(''); const [streakRecord,setStreakRecord]=useJsonState('streak-record',0);
+ const latestCheckIns=useRef(checkIns);latestCheckIns.current=checkIns;
+ const latestStreakRecord=useRef(streakRecord);latestStreakRecord.current=streakRecord;
+ const latestProfile=useRef(profile);latestProfile.current=profile;
  const [draft,setDraft]=useJsonState<UserProfile>('draft',()=>structuredClone(blankProfile),validProfile);const [stage,setStage]=useJsonState<OnboardingStage>('stage','basics',value=>['basics','sex','goal','type','intensity','schedule','confirm','ready'].includes(String(value)));const [talking,setTalking]=useState(false);const [session,setSession]=useState(0);const [manual,setManual]=useJsonState('manual',false);const [mealDescription,setMealDescription]=useJsonState('meal-description','');const [suggestedMeal,setSuggestedMeal]=useJsonState<SuggestedMeal | undefined>('suggested-meal',undefined,validSuggestedMeal);const [mealFeedback,setMealFeedback]=useState<{id:string;text:string}>();
  const [storageNotice,setStorageNotice]=useStorageNotice();
  const [editingMeal,setEditingMeal]=useJsonState<MealEntry | undefined>('editing-meal',undefined,value=>validEntries([value]));
@@ -38,12 +41,14 @@ export default function App({mobile = false}:{mobile?:boolean}){
  }
  const planContext:ChatPlanContext={today:dateKey(new Date()),selected_date:selectedDate,days:weekDates().map((date,i)=>{const key=dateKey(date);return {date:key,label:weekdays[i],is_rest_day:profile?.weekSchedule[i].isRestDay??false,nutrition:checkIns[key]?.nutrition??false,training:checkIns[key]?.training??false,nutrition_note:checkIns[key]?.nutritionNote,training_note:checkIns[key]?.trainingNote};}),target:plans[index]?{min:plans[index].targetMin,max:plans[index].targetMax}:undefined,logged:sumNutrition(entries.filter(entry=>entry.dateKey===selectedDate).map(entry=>entry.analysis.knownTotal))};
  function updatePlanCheckIns(updates:PlanUpdate[]){
-  if(!profile) throw new Error('Tạo kế hoạch trước khi cập nhật checklist nhé.');
-  const next=applyCheckInUpdates(checkIns,updates,{today:dateKey(new Date()),days:weekDates().map(date=>({date:dateKey(date),label:'',is_rest_day:false,nutrition:false,training:false}))});
+  if(!latestProfile.current) throw new Error('Tạo kế hoạch trước khi cập nhật checklist nhé.');
+  const previous=latestCheckIns.current;
+  const next=applyCheckInUpdates(previous,updates,{today:dateKey(new Date()),days:weekDates().map(date=>({date:dateKey(date),label:'',is_rest_day:false,nutrition:false,training:false}))});
   const summary=streakSummary(next);
+  latestCheckIns.current=next;
   setCheckIns(next);
-  if(summary.longest>streakRecord){setStreakRecord(summary.longest);setCelebration(streakEncouragement(summary.longest));}
-  else if(updates.some(update=>isDayComplete(next,update.date) && !isDayComplete(checkIns,update.date))){setCelebration('Thêm một ngày được ghi nhận! Mỗi bước chăm sóc bản thân đều có giá trị. Tiếp tục theo nhịp của bạn nhé.');}
+  if(summary.longest>latestStreakRecord.current){latestStreakRecord.current=summary.longest;setStreakRecord(summary.longest);setCelebration(streakEncouragement(summary.longest));}
+  else if(updates.some(update=>isDayComplete(next,update.date) && !isDayComplete(previous,update.date))){setCelebration('Thêm một ngày được ghi nhận! Mỗi bước chăm sóc bản thân đều có giá trị. Tiếp tục theo nhịp của bạn nhé.');}
   else if(updates.some(update=>update.checked!==undefined)){setCelebration('');}
   return `Đã cập nhật checklist: ${updates.map(update=>`${update.category==='nutrition'?'Dinh dưỡng':'Tập / phục hồi'} ngày ${update.date.split('-').reverse().join('/')} (${update.checked===undefined?'đã sửa ghi chú':update.checked?'đã hoàn thành':'chưa hoàn thành'})`).join('; ')}.`;
  }

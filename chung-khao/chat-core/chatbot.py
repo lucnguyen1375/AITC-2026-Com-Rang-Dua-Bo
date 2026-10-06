@@ -15,7 +15,8 @@ load_dotenv(ROOT_ENV, override=True)
 
 API_KEY = os.getenv("THUCCHIEN_API_KEY", "").strip()
 BASE_URL = os.getenv("THUCCHIEN_BASE_URL", "https://api.thucchien.ai/v1").rstrip("/")
-MODEL = os.getenv("THUCCHIEN_MODEL", "gpt-6-luna").strip()
+MODEL = "gpt-6-luna"
+REASONING_EFFORT = "none"
 REQUEST_TIMEOUT = 45.0
 PROFILE_FIELDS = ("age", "sex", "height", "weight", "goal", "training_type", "intensity", "sessions", "schedule")
 PROFILE_FIELD_SET = frozenset(PROFILE_FIELDS)
@@ -139,6 +140,7 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
                     headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
                     json={
                         "model": MODEL,
+                        "reasoning": {"effort": REASONING_EFFORT},
                         "instructions": instructions if instructions is not None else INSTRUCTIONS + (PROFILE_COMPLETION_INSTRUCTIONS if profile_completion else ""),
                         "input": messages,
                         "stream": False,
@@ -153,6 +155,8 @@ async def ask_assistant(messages: list[dict[str, str]], *, profile_completion: b
                     raise ChatbotError(429, "Dịch vụ đang giới hạn lượt gọi. Bạn hãy chờ một chút rồi thử lại.")
                 if response.status_code == 404:
                     raise ChatbotError(502, "Chưa truy cập được mô hình hoặc địa chỉ API đã cấu hình.")
+                if response.status_code == 400:
+                    raise ChatbotError(502, "Dịch vụ AI từ chối yêu cầu (HTTP 400). Cần kiểm tra địa chỉ Gateway và cấu hình mô hình trên máy chủ.")
                 if not response.is_success:
                     raise ChatbotError(502, "Dịch vụ AI tạm thời chưa trả lời được. Bạn hãy thử lại.")
                 try:

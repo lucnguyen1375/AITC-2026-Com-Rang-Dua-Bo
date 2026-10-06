@@ -19,11 +19,12 @@ export default function AssistantChat({ planContext, onPlanUpdates, stage, camer
  const [input,setInput]=useJsonState('chat-input','');const [busy,setBusy]=useState(false);const [attachment,setAttachment]=useJsonState<string | undefined>('chat-attachment',undefined,value=>typeof value==='string' && value.startsWith('data:image/'));const [error,setError]=useState('');const [days,setDays]=useJsonState<number[]>('chat-days',[],value=>Array.isArray(value) && value.every(day=>Number.isInteger(day) && day>=0 && day<=6));const [time,setTime]=useJsonState('chat-time','17:30');const [duration,setDuration]=useJsonState('chat-duration',60);const [preview,setPreview]=useJsonState<DailyPlan[] | undefined>('chat-preview',undefined,validPlans);const scroll=useRef<HTMLDivElement>(null);const upload=useRef<HTMLInputElement>(null);const urls=useRef(new Set<string>());const timer=useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
  const lastFeedback=useRef<string | undefined>(undefined);
  const [uploading,setUploading]=useState(false);
+ const requestController=useRef<AbortController | undefined>(undefined);
  useEffect(()=>{if(mealFeedback && lastFeedback.current!==mealFeedback.id){lastFeedback.current=mealFeedback.id;reply(mealFeedback.text);}},[mealFeedback]);
  useEffect(()=>{if(stage!=='confirm')return;let active=true;setBusy(true);setPreview(undefined);void createPlan(draft).then(result=>{if(active)setPreview(result);}).catch(()=>{if(active)setError('Chưa chuẩn bị được đề xuất. Quay lại lịch tập rồi xác nhận lại nhé.');}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[stage,draft]);
  useEffect(()=>{if(profile && stage!=='ready'){setStage('ready');}},[profile]);
  useEffect(()=>{scroll.current?.scrollTo({top:scroll.current.scrollHeight,behavior:'smooth'});},[messages,busy,stage]);
- useEffect(()=>()=>{urls.current.forEach(url=>URL.revokeObjectURL(url));if(timer.current)clearTimeout(timer.current);},[]);
+ useEffect(()=>()=>{requestController.current?.abort();urls.current.forEach(url=>URL.revokeObjectURL(url));if(timer.current)clearTimeout(timer.current);},[]);
  function append(role:Message['role'],text:string,image?:string){setMessages(previous=>[...previous,{id:crypto.randomUUID(),role,text,image}]);}
  function reply(text:string){append('assistant',text);onTalking(true);if(timer.current)clearTimeout(timer.current);timer.current=setTimeout(()=>onTalking(false),2200);}
  async function send(value=input){
@@ -36,8 +37,10 @@ export default function AssistantChat({ planContext, onPlanUpdates, stage, camer
    setMessages(nextMessages);setInput('');setAttachment(undefined);
    const safe=safetyResponse(text);if(safe){reply(safe);return;}
    setBusy(true);
+   const controller=new AbortController();requestController.current=controller;
    try{
-    const result=await requestNutritionChat(nextMessages,profile,undefined,planContext);
+    const result=await requestNutritionChat(nextMessages,profile,undefined,planContext,controller.signal);
+    if(controller.signal.aborted)return;
     let receipt='';
     if(result.plan_updates?.length){
      if(!onPlanUpdates) throw new Error('Chưa có kế hoạch để áp dụng thay đổi checklist.');
@@ -45,7 +48,7 @@ export default function AssistantChat({ planContext, onPlanUpdates, stage, camer
     }
     reply([result.reply,receipt].filter(Boolean).join('\n\n'));
     setProfileRequest(result.profile_request??[]);setProfileAnswers({});
-   }catch(e){setError(e instanceof Error?e.message:'Chưa kết nối được trợ lý. Hãy thử lại.');setInput(value);if(image)setAttachment(image);}
+   }catch(e){if(!controller.signal.aborted){setError(e instanceof Error?e.message:'Chưa kết nối được trợ lý. Hãy thử lại.');setInput(value);if(image)setAttachment(image);}}
    finally{setBusy(false);}
    return;
   }
